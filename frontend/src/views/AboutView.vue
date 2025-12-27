@@ -31,11 +31,17 @@ const sendTestRequest = async () => {
 </template>
 
 <style scoped>
+.about {
+  border-radius: 16px !important;
+  overflow: hidden; /* 防止内容溢出圆角 */
+}
+
 .test-section {
   margin-top: 20px;
   padding: 20px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 16px !important;
+  overflow: hidden; /* 防止内容溢出圆角 */
 }
 
 .test-btn {
@@ -43,7 +49,7 @@ const sendTestRequest = async () => {
   background-color: #409eff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* 按钮使用较小的圆角 */
   cursor: pointer;
   font-size: 16px;
 }
@@ -56,7 +62,7 @@ const sendTestRequest = async () => {
   margin-top: 20px;
   padding: 10px;
   background-color: #f0f9ff;
-  border-radius: 4px;
+  border-radius: 8px; /* 响应区域使用适中的圆角 */
 }
 
 @media (min-width: 1024px) {

@@ -1,35 +1,60 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* 重置基础样式 */
+html, body {
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    /* 关键：允许最小高度为一屏，但内容超出时必须自动延伸 */ 
+    min-height: 100vh !important; 
+    height: auto !important; 
+    overflow-y: scroll !important; /* 强制显示垂直滚动轨道 */ 
+    overflow-x: hidden; /* 隐藏水平滚动条 */ 
+} 
+/* Vue挂载点高度解锁 */ 
+#app { 
+    width: 100%; 
+    min-height: 100vh !important; 
+    height: auto !important; 
+    position: relative; 
+    /* 确保没有overflow: hidden截断内容 */ 
+    overflow: visible !important; 
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+/* Global Scrollbar Styling */ 
+::-webkit-scrollbar { 
+    width: 8px !important;  /* Match reference thickness */ 
+    height: 8px !important; 
+} 
+/* Track (Transparent/Subtle) */
+::-webkit-scrollbar-track { 
+    background: transparent !important; /* Floating look */ 
+} 
+
+/* Thumb (Default State) */
+::-webkit-scrollbar-thumb { 
+    background-color: rgba(192, 196, 204, 0.6) !important; /* Semi-transparent Grey */ 
+    border-radius: 4px; 
+} 
+
+/* Thumb (Hover State - User Specified Color) */
+::-webkit-scrollbar-thumb:hover { 
+    background-color: #5087A4 !important; /* The exact Blue-Grey from reference */ 
+} 
+
+/* 统一圆角标准：为右侧内容区域的所有主要容器添加圆角 */
+.el-card,
+.content-card,
+.banner-card {
+    border-radius: 16px !important;
+    overflow: hidden; /* 防止内部图片或子元素溢出圆角 */
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+/* 为列表项添加小圆角 */
+.el-card li,
+.content-card li,
+.banner-card li {
+    border-radius: 8px;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+:root { 
+    --el-border-radius-base: 10px; /* Softer corners for all cards/buttons */ 
 }
