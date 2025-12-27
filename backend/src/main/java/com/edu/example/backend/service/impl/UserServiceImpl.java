@@ -25,8 +25,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean register(String username, String password, String email) {
         try {
+            // 用户名格式验证
+            if (!username.matches("^[a-zA-Z0-9]{3,20}$")) {
+                System.err.println("注册失败: 用户名必须是3-20位字母或数字");
+                return false;
+            }
+            
+            // 密码长度验证
+            if (password.length() < 6) {
+                System.err.println("注册失败: 密码长度至少6位");
+                return false;
+            }
+            
+            // 邮箱格式验证
+            if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+                System.err.println("注册失败: 邮箱格式不正确");
+                return false;
+            }
+            
             // 检查用户名是否已存在
             if (findByUsername(username) != null) {
+                System.err.println("注册失败: 用户名已存在");
                 return false;
             }
             

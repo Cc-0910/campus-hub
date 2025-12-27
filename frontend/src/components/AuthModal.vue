@@ -119,15 +119,27 @@ const registerForm = reactive({
 const formRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度应在3-20个字符之间', trigger: 'blur' }
+    { 
+      pattern: /^[a-zA-Z0-9]{3,20}$/, 
+      message: '用户名必须是3-20位字母或数字', 
+      trigger: 'blur' 
+    }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '密码长度应在6-20个字符之间', trigger: 'blur' }
+    { 
+      min: 6, 
+      message: '密码长度至少6位', 
+      trigger: 'blur' 
+    }
   ],
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    { 
+      type: 'email', 
+      message: '请输入正确的邮箱格式', 
+      trigger: 'blur' 
+    }
   ]
 }
 
