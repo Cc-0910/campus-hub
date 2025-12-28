@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import request from '@/utils/request'
 import { ref } from 'vue'
 import router from '@/router'
+import { mockLogin, mockRegister } from '@/mock/auth'
 
 export const useUserStore = defineStore(
   'user',
@@ -16,10 +17,9 @@ export const useUserStore = defineStore(
     // Actions
     const login = async (username, password) => {
       try {
-        const res = await request.post('/auth/login', {
-          username,
-          password
-        })
+        // 使用模拟登录（在没有后端服务时）
+        const res = await mockLogin(username, password)
+        
         token.value = res.data.token
         userInfo.value = {
           id: res.data.userInfo.id,
@@ -34,21 +34,33 @@ export const useUserStore = defineStore(
         
         return res
       } catch (error) {
-        // 优化错误信息显示
-        if (error.response && error.response.data) {
-          throw new Error(error.response.data.message || '登录失败')
+        // 如果模拟登录失败，尝试真实API（用于开发环境切换）
+        try {
+          const res = await request.post('/auth/login', {
+            username,
+            password
+          })
+          token.value = res.data.token
+          userInfo.value = {
+            id: res.data.userInfo.id,
+            username: username,
+            nickname: res.data.userInfo.nickname,
+            avatar: res.data.userInfo.avatar,
+            role: res.data.userInfo.role
+          }
+          
+          await router.push('/app')
+          return res
+        } catch (realError) {
+          throw new Error(error.message || '登录失败')
         }
-        throw new Error('网络错误，请检查网络连接')
       }
     }
 
     const register = async (username, password, email) => {
       try {
-        const res = await request.post('/auth/register', {
-          username,
-          password,
-          email
-        })
+        // 使用模拟注册（在没有后端服务时）
+        const res = await mockRegister(username, password, email)
         
         // 注册成功后直接使用返回的用户信息
         if (res.data && res.data.userInfo) {
@@ -67,11 +79,31 @@ export const useUserStore = defineStore(
         
         return res
       } catch (error) {
-        // 优化错误信息显示
-        if (error.response && error.response.data) {
-          throw new Error(error.response.data.message || '注册失败')
+        // 如果模拟注册失败，尝试真实API（用于开发环境切换）
+        try {
+          const res = await request.post('/auth/register', {
+            username,
+            password,
+            email
+          })
+          
+          if (res.data && res.data.userInfo) {
+            token.value = res.data.token
+            userInfo.value = {
+              id: res.data.userInfo.id,
+              username: username,
+              nickname: res.data.userInfo.nickname,
+              avatar: res.data.userInfo.avatar,
+              role: res.data.userInfo.role
+            }
+            
+            await router.push('/app')
+          }
+          
+          return res
+        } catch (realError) {
+          throw new Error(error.message || '注册失败')
         }
-        throw new Error('网络错误，请检查网络连接')
       }
     }
 

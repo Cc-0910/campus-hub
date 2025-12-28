@@ -30,6 +30,12 @@ const router = createRouter({
           meta: { title: '话题' }
         },
         {
+          path: 'topics/:id',
+          name: 'topic-detail',
+          component: () => import('../views/TopicDetailView.vue'),
+          meta: { title: '话题详情' }
+        },
+        {
           path: 'qa',
           name: 'qa',
           component: () => import('../views/QAView.vue'),
