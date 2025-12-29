@@ -36,6 +36,18 @@ const router = createRouter({
           meta: { title: '话题详情' }
         },
         {
+          path: 'articles/:id',
+          name: 'article-detail',
+          component: () => import('../views/ArticleDetailView.vue'),
+          meta: { title: '文章详情' }
+        },
+        {
+          path: 'qa/:id',
+          name: 'question-detail',
+          component: () => import('../views/QuestionDetailView.vue'),
+          meta: { title: '问答详情' }
+        },
+        {
           path: 'qa',
           name: 'qa',
           component: () => import('../views/QAView.vue'),

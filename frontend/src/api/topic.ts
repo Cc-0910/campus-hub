@@ -1,6 +1,10 @@
 import request from '@/utils/request'
 import type { Topic, TopicListResponse, FollowTopicRequest } from '@/types/topic'
+import type { Article, ArticleListResponse } from '@/types/article'
+import type { Question, QuestionListResponse } from '@/types/qa'
 import { mockTopics } from '@/mock/topics'
+import { mockArticles } from '@/mock/articles'
+import { mockQuestions } from '@/mock/questions'
 
 export const topicApi = {
   // 获取话题列表
@@ -56,6 +60,52 @@ export const topicApi = {
         } else {
           reject(new Error('话题不存在'))
         }
+      }, 300)
+    })
+  },
+
+  // 获取话题下的文章列表
+  getTopicArticles: (topicId: number, params?: { page?: number; size?: number }) => {
+    return new Promise<ArticleListResponse>((resolve) => {
+      setTimeout(() => {
+        const articles = mockArticles.filter(article => article.topicId === topicId)
+        
+        // 分页处理
+        const page = params?.page || 1
+        const size = params?.size || 10
+        const startIndex = (page - 1) * size
+        const endIndex = startIndex + size
+        const paginatedArticles = articles.slice(startIndex, endIndex)
+        
+        resolve({
+          code: 200,
+          data: paginatedArticles,
+          total: articles.length,
+          msg: 'success'
+        })
+      }, 300)
+    })
+  },
+
+  // 获取话题下的问答列表
+  getTopicQuestions: (topicId: number, params?: { page?: number; size?: number }) => {
+    return new Promise<QuestionListResponse>((resolve) => {
+      setTimeout(() => {
+        const questions = mockQuestions.filter(question => question.topicId === topicId)
+        
+        // 分页处理
+        const page = params?.page || 1
+        const size = params?.size || 10
+        const startIndex = (page - 1) * size
+        const endIndex = startIndex + size
+        const paginatedQuestions = questions.slice(startIndex, endIndex)
+        
+        resolve({
+          code: 200,
+          data: paginatedQuestions,
+          total: questions.length,
+          msg: 'success'
+        })
       }, 300)
     })
   }
