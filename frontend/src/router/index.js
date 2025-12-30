@@ -48,6 +48,12 @@ const router = createRouter({
           meta: { title: '问答详情' }
         },
         {
+          path: 'admin/topics',
+          name: 'admin-topics',
+          component: () => import('../views/AdminTopicsView.vue'),
+          meta: { title: '话题管理', requiresAdmin: true }
+        },
+        {
           path: 'qa',
           name: 'qa',
           component: () => import('../views/QAView.vue'),
@@ -92,6 +98,10 @@ router.beforeEach(async (to, from, next) => {
   // 如果用户未登录且访问 /app 下的页面，则重定向到根路径
   else if (!userStore.token && to.path.startsWith('/app')) {
     next('/');
+  }
+  // 检查管理员权限
+  else if (to.meta.requiresAdmin && userStore.userInfo.role !== 'admin') {
+    next('/app'); // 非管理员重定向到首页
   }
   // 其他情况正常导航
   else {

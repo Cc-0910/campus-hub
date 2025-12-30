@@ -25,6 +25,7 @@
             :src="topic.coverImage || '/src/assets/logo.svg'" 
             :alt="topic.name"
             @error="handleImageError"
+            @click="goToTopicDetail(topic.id)"
           />
         </div>
         

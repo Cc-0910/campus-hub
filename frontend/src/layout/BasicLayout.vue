@@ -62,6 +62,12 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item @click="goToProfile">个人资料</el-dropdown-item>
+                  <el-dropdown-item 
+                    v-if="userStore.userInfo.role === 'admin'" 
+                    @click="goToAdminTopics"
+                  >
+                    话题管理
+                  </el-dropdown-item>
                   <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -181,6 +187,10 @@ const getPageTitle = () => {
 const goToProfile = () => {
   // 跳转到个人资料页面（待实现）
   ElMessage.info('个人资料页面待实现')
+}
+
+const goToAdminTopics = () => {
+  router.push('/app/admin/topics')
 }
 
 const logout = async () => {

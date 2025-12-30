@@ -6,7 +6,82 @@ import { mockTopics } from '@/mock/topics'
 import { mockArticles } from '@/mock/articles'
 import { mockQuestions } from '@/mock/questions'
 
+export interface CreateTopicRequest {
+  name: string
+  description: string
+  coverImage?: string
+}
+
 export const topicApi = {
+  // 创建话题
+  createTopic: (data: CreateTopicRequest) => {
+    return new Promise<Topic>((resolve) => {
+      setTimeout(() => {
+        const newTopic: Topic = {
+          id: Math.max(...mockTopics.map(t => t.id)) + 1,
+          name: data.name,
+          description: data.description,
+          coverImage: data.coverImage || '',
+          followerCount: 0,
+          isFollowing: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+        mockTopics.unshift(newTopic)
+        resolve(newTopic)
+      }, 500)
+    })
+  },
+
+  // 发布文章
+  publishArticle: (data: { title: string; content: string; topicId: number }) => {
+    return new Promise<Article>((resolve) => {
+      setTimeout(() => {
+        const newArticle: Article = {
+          id: Math.max(...mockArticles.map(a => a.id)) + 1,
+          title: data.title,
+          content: data.content,
+          author: '当前用户', // 实际应该从用户信息获取
+          authorAvatar: '',
+          topicId: data.topicId,
+          topicName: mockTopics.find(t => t.id === data.topicId)?.name || '',
+          viewCount: 0,
+          likeCount: 0,
+          commentCount: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+        mockArticles.unshift(newArticle)
+        resolve(newArticle)
+      }, 500)
+    })
+  },
+
+  // 发布问题
+  publishQuestion: (data: { title: string; content: string; topicId: number }) => {
+    return new Promise<Question>((resolve) => {
+      setTimeout(() => {
+        const newQuestion: Question = {
+          id: Math.max(...mockQuestions.map(q => q.id)) + 1,
+          title: data.title,
+          content: data.content,
+          author: '当前用户', // 实际应该从用户信息获取
+          authorAvatar: '',
+          topicId: data.topicId,
+          topicName: mockTopics.find(t => t.id === data.topicId)?.name || '',
+          answerCount: 0,
+          viewCount: 0,
+          likeCount: 0,
+          isSolved: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+        mockQuestions.unshift(newQuestion)
+        resolve(newQuestion)
+      }, 500)
+    })
+  },
+
   // 获取话题列表
   getTopics: (params?: { page?: number; size?: number; sort?: string }) => {
     return new Promise<TopicListResponse>((resolve) => {

@@ -1,5 +1,13 @@
 <template>
   <div class="topic-detail-container">
+    <!-- 浮动编辑器 -->
+    <FloatingEditor 
+      :current-topic-id="parseInt(route.params.id as string)"
+      @submit="handleEditorSubmit"
+      @close="handleEditorClose"
+      @mode-change="handleEditorModeChange"
+    />
+    
     <!-- 话题头部信息 -->
     <div class="topic-header">
       <div class="topic-cover">
@@ -147,6 +155,8 @@ import { topicApi } from '@/api/topic'
 import type { Topic } from '@/types/topic'
 import type { Article } from '@/types/article'
 import type { Question } from '@/types/qa'
+import type { EditorContent } from '@/types/editor'
+import FloatingEditor from '@/components/FloatingEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -265,6 +275,63 @@ const handleImageError = (event: Event) => {
 const formatTime = (timeString: string) => {
   const date = new Date(timeString)
   return date.toLocaleDateString('zh-CN')
+}
+
+// 编辑器相关方法
+const handleEditorSubmit = async (content: EditorContent) => {
+  try {
+    console.log('编辑器提交内容:', content)
+    
+    // 根据内容类型处理不同的发布逻辑
+    switch (content.type) {
+      case 'article':
+        // 发布文章逻辑
+        if (content.title && content.content && content.topicId) {
+          await topicApi.publishArticle({
+            title: content.title,
+            content: content.content,
+            topicId: content.topicId
+          })
+          ElMessage.success('文章发布成功!')
+          // 重新加载文章列表
+          loadArticles()
+        }
+        break
+        
+      case 'question':
+        // 发布问题逻辑
+        if (content.title && content.content && content.topicId) {
+          await topicApi.publishQuestion({
+            title: content.title,
+            content: content.content,
+            topicId: content.topicId
+          })
+          ElMessage.success('问题发布成功!')
+          // 重新加载问答列表
+          loadQuestions()
+        }
+        break
+        
+      case 'comment':
+        // 发布评论逻辑
+        if (content.content) {
+          // 这里需要实现发布评论的API
+          ElMessage.success('评论发布成功!')
+        }
+        break
+    }
+  } catch (error) {
+    console.error('发布失败:', error)
+    ElMessage.error('发布失败，请重试')
+  }
+}
+
+const handleEditorClose = () => {
+  console.log('编辑器关闭')
+}
+
+const handleEditorModeChange = (mode: string) => {
+  console.log('编辑器模式变化:', mode)
 }
 
 // 监听标签切换
