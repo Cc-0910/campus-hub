@@ -3,20 +3,12 @@ server:
 
 spring:
   application:
-    name: campus-hub
+    name: campus_hub
   datasource:
     url: jdbc:mysql://localhost:3306/campus_hub?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 8888
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-# 文件上传配置
-file:
-  upload-dir: src/main/resources/static/images/topics
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
