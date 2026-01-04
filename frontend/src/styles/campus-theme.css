@@ -1,0 +1,160 @@
+/* 小清新校园风主题 - campus-theme.css */
+
+/* CSS 变量定义 - 可全局使用 */
+:root {
+  --campus-primary: #409EFF;
+  --campus-primary-light: #E6F3FF;
+  --campus-success: #67C23A;
+  --campus-bg-page: #F8FAFC;
+  --campus-bg-card: #FFFFFF;
+  --campus-border-radius: 16px;
+  --campus-shadow: 0 4px 12px rgba(64, 158, 255, 0.1);
+  --campus-text-primary: #303133;
+  --campus-text-secondary: #909399;
+}
+
+/* 通用卡片样式 */
+.campus-card {
+  background: var(--campus-bg-card);
+  border-radius: var(--campus-border-radius);
+  box-shadow: var(--campus-shadow);
+  padding: 20px;
+}
+
+/* Element Plus 组件覆盖样式 */
+.el-card {
+  background: var(--campus-bg-card);
+  border-radius: var(--campus-border-radius);
+  box-shadow: var(--campus-shadow);
+  padding: 20px;
+}
+
+.el-button {
+  border-radius: var(--campus-border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+.el-button--primary {
+  background-color: var(--campus-primary);
+  border-color: var(--campus-primary);
+}
+
+.el-button--success {
+  background-color: var(--campus-success);
+  border-color: var(--campus-success);
+}
+
+/* 校园风格按钮 */
+.campus-button {
+  border-radius: var(--campus-border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.campus-button.primary {
+  background-color: var(--campus-primary);
+  color: white;
+}
+
+.campus-button.primary:hover {
+  background-color: #3399FF;
+}
+
+.campus-button.success {
+  background-color: var(--campus-success);
+  color: white;
+}
+
+.campus-button.success:hover {
+  background-color: #5BAE2B;
+}
+
+/* 文本样式 */
+.campus-text-primary {
+  color: var(--campus-text-primary);
+}
+
+.campus-text-secondary {
+  color: var(--campus-text-secondary);
+}
+
+/* 背景样式 */
+.campus-bg-page {
+  background-color: var(--campus-bg-page);
+}
+
+.campus-bg-card {
+  background-color: var(--campus-bg-card);
+}
+
+/* 卡片悬停效果 */
+.campus-card:hover {
+  box-shadow: 0 8px 24px rgba(64, 158, 255, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+/* 页面布局 */
+.campus-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: var(--campus-bg-page);
+  min-height: 100vh;
+}
+
+/* 用户卡片特定样式 */
+.user-card {
+  background: var(--campus-bg-card);
+  border-radius: var(--campus-border-radius);
+  box-shadow: var(--campus-shadow);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.user-card .avatar-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.user-card .user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.user-card .user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-card .nickname {
+  margin: 8px 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--campus-text-primary);
+}
+
+.user-card .signature {
+  font-size: 14px;
+  color: var(--campus-text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

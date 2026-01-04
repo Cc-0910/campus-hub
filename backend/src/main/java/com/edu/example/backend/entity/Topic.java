@@ -1,0 +1,39 @@
+package com.edu.example.backend.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("sys_topic")
+public class Topic {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    
+    private String name;
+    
+    private String description;
+    
+    private String icon;
+    
+    private String color;
+    
+    private Integer articleCount;
+    
+    private Integer followerCount;
+    
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+    
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+}
