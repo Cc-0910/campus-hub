@@ -8,7 +8,15 @@ export const useUserStore = defineStore(
   () => {
     // State
     const token = ref('')
-    const userInfo = ref({})
+    const userInfo = ref({
+      id: 0,
+      username: '',
+      nickname: '用户',
+      avatar: '',
+      articleCount: 0,
+      followingCount: 0,
+      followerCount: 0
+    })
     const showLoginModal = ref(false)
     const loginModalTab = ref('login')
     const enableClickEffect = ref(true)

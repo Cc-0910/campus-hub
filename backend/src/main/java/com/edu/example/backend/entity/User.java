@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("sys_user")
+@TableName("campus_hub_user")
 public class User {
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -27,8 +27,19 @@ public class User {
     
     private String avatar;
     
-    private String email;
+    private String bio; // 个人简介
     
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private String school;
+    
+    private String location;
+    
+    private String interests;
+    
+    // 关注状态，用于前端显示用户是否被当前用户关注
+    @TableField(exist = false)
+    private Boolean isFollowing;
+    
+    private Long createTime;
+    
+    private Long updateTime;
 }

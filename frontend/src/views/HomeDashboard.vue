@@ -31,74 +31,80 @@
     </el-row>
 
     <el-row :gutter="20" class="section-row">
-      <el-col :xs="24" :sm="12" :md="12">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span><el-icon><ChatLineRound /></el-icon> 最新问答</span>
-              <el-button class="button" text @click="router.push('/app/qa')">更多</el-button>
-            </div>
-          </template>
-          <ul class="text-list">
-            <li v-for="qa in latestQA" :key="qa.id" @click="goToDetail(qa.type, qa.id)">
-              <span class="list-title">{{ qa.title }}</span>
-              <span class="list-time">{{ qa.createTime }}</span>
-            </li>
-          </ul>
-        </el-card>
-      </el-col>
+      <el-col :span="24">
+        <el-row :gutter="20" class="section-row">
+          <el-col :span="24">
+            <el-card class="box-card" shadow="hover">
+              <template #header>
+                <div class="card-header">
+                  <span><el-icon><ChatLineRound /></el-icon> 最新问答</span>
+                  <el-button class="button" text @click="router.push('/app/qa')">更多</el-button>
+                </div>
+              </template>
+              <ul class="text-list">
+                <li v-for="qa in latestQA" :key="qa.id" @click="goToDetail(qa.type, qa.id)">
+                  <span class="list-title">{{ qa.title }}</span>
+                  <span class="list-time">{{ qa.createTime }}</span>
+                </li>
+              </ul>
+            </el-card>
+          </el-col>
+        </el-row>
 
-      <el-col :xs="24" :sm="12" :md="12">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span class="red-icon"><el-icon><HotWater /></el-icon> 最热问答</span>
-              <el-button class="button" text @click="router.push('/app/qa?sort=hot')">更多</el-button>
-            </div>
-          </template>
-          <ul class="text-list">
-            <li v-for="qa in hottestQA" :key="qa.id" @click="goToDetail(qa.type, qa.id)">
-              <span class="list-title">{{ qa.title }}</span>
-              <span class="list-meta">🔥 {{ qa.viewCount }}</span>
-            </li>
-          </ul>
-        </el-card>
-      </el-col>
-    </el-row>
+        <el-row :gutter="20" class="section-row">
+          <el-col :xs="24" :sm="12" :md="12">
+            <el-card class="box-card" shadow="hover">
+              <template #header>
+                <div class="card-header">
+                  <span class="red-icon"><el-icon><HotWater /></el-icon> 最热问答</span>
+                  <el-button class="button" text @click="router.push('/app/qa?sort=hot')">更多</el-button>
+                </div>
+              </template>
+              <ul class="text-list">
+                <li v-for="qa in hottestQA" :key="qa.id" @click="goToDetail(qa.type, qa.id)">
+                  <span class="list-title">{{ qa.title }}</span>
+                  <span class="list-meta">🔥 {{ qa.viewCount }}</span>
+                </li>
+              </ul>
+            </el-card>
+          </el-col>
 
-    <el-row :gutter="20" class="section-row">
-      <el-col :xs="24" :sm="12" :md="12">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span><el-icon><Document /></el-icon> 最新文章</span>
-              <el-button class="button" text @click="router.push('/app/articles')">更多</el-button>
-            </div>
-          </template>
-          <ul class="text-list">
-            <li v-for="article in latestArticles" :key="article.id" @click="goToDetail(article.type, article.id)">
-              <span class="list-title">{{ article.title }}</span>
-              <span class="list-time">{{ article.createTime }}</span>
-            </li>
-          </ul>
-        </el-card>
-      </el-col>
+          <el-col :xs="24" :sm="12" :md="12">
+            <el-card class="box-card" shadow="hover">
+              <template #header>
+                <div class="card-header">
+                  <span><el-icon><Document /></el-icon> 最新文章</span>
+                  <el-button class="button" text @click="router.push('/app/articles')">更多</el-button>
+                </div>
+              </template>
+              <ul class="text-list">
+                <li v-for="article in latestArticles" :key="article.id" @click="goToDetail(article.type, article.id)">
+                  <span class="list-title">{{ article.title }}</span>
+                  <span class="list-time">{{ article.createTime }}</span>
+                </li>
+              </ul>
+            </el-card>
+          </el-col>
+        </el-row>
 
-      <el-col :xs="24" :sm="12" :md="12">
-        <el-card class="box-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span class="red-icon"><el-icon><Trophy /></el-icon> 最热文章</span>
-              <el-button class="button" text @click="router.push('/app/articles?sort=hot')">更多</el-button>
-            </div>
-          </template>
-          <ul class="text-list">
-            <li v-for="article in hottestArticles" :key="article.id" @click="goToDetail(article.type, article.id)">
-              <span class="list-title">{{ article.title }}</span>
-              <span class="list-meta">🔥 {{ article.viewCount }}</span>
-            </li>
-          </ul>
-        </el-card>
+        <el-row :gutter="20" class="section-row">
+          <el-col :span="24">
+            <el-card class="box-card" shadow="hover">
+              <template #header>
+                <div class="card-header">
+                  <span class="red-icon"><el-icon><Trophy /></el-icon> 最热文章</span>
+                  <el-button class="button" text @click="router.push('/app/articles?sort=hot')">更多</el-button>
+                </div>
+              </template>
+              <ul class="text-list">
+                <li v-for="article in hottestArticles" :key="article.id" @click="goToDetail(article.type, article.id)">
+                  <span class="list-title">{{ article.title }}</span>
+                  <span class="list-meta">🔥 {{ article.viewCount }}</span>
+                </li>
+              </ul>
+            </el-card>
+          </el-col>
+        </el-row>
       </el-col>
     </el-row>
   </div>
@@ -107,6 +113,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import { 
   Collection, 
   ChatLineRound, 
@@ -116,6 +123,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const goToDetail = (type, id) => { // 简单的路由跳转逻辑，后续可根据实际路由调整
   router.push(`/app/${type}/${id}`)

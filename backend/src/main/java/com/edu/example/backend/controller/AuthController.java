@@ -3,6 +3,7 @@ package com.edu.example.backend.controller;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.edu.example.backend.common.Result;
+import com.edu.example.backend.common.JwtUtil;
 import com.edu.example.backend.dto.LoginDTO;
 import com.edu.example.backend.dto.RegisterDTO;
 import com.edu.example.backend.entity.User;
@@ -19,6 +20,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public Result<String> register(@RequestBody RegisterDTO registerDTO) {
@@ -40,8 +44,8 @@ public class AuthController {
         User user = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
         
         if (user != null) {
-            // 生成token
-            String token = IdUtil.simpleUUID();
+            // 生成JWT token
+            String token = jwtUtil.generateToken(user.getUsername(), user.getId());
             
             // 返回用户信息
             Map<String, Object> data = new HashMap<>();

@@ -32,11 +32,7 @@
         
         <!-- 搜索框 -->
         <div class="search-box">
-          <el-input 
-            placeholder="搜索话题、文章或用户..." 
-            :prefix-icon="Search" 
-            class="search-input"
-          />
+          <SearchBar />
         </div>
         
         <!-- 最右侧：通知图标、用户头像 -->
@@ -54,7 +50,7 @@
           <div v-else class="user-info">
             <el-button type="default" :icon="Bell" circle class="notification-btn" />
             <el-dropdown>
-              <div class="user-avatar">
+              <div class="user-avatar" @click="goToProfile" style="cursor: pointer;">
                 <el-avatar :size="40" :src="userStore.userInfo.avatar || defaultAvatar">
                   {{ userStore.userInfo.nickname ? userStore.userInfo.nickname.charAt(0) : 'U' }}
                 </el-avatar>
@@ -88,7 +84,7 @@
     <div class="content-wrapper" ref="contentWrapperRef">
       <!-- 左侧悬浮资料卡 -->
       <div class="side-profile-card">
-        <SideProfileCard />
+        <SideProfileCard :user="userStore.userInfo" />
       </div>
 
       <!-- 主内容区 -->
@@ -116,6 +112,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, onMounted, onUnmounted } from 'vue'
 import SideProfileCard from '@/components/SideProfileCard.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import CursorBoom from '@/components/Effects/CursorBoom.vue'
 import ClickExplosion from '@/components/Effects/ClickExplosion.vue'
 import {
@@ -179,8 +176,8 @@ const getPageTitle = () => {
 }
 
 const goToProfile = () => {
-  // 跳转到个人资料页面（待实现）
-  ElMessage.info('个人资料页面待实现')
+  // 跳转到个人资料页面
+  router.push(`/user/${userStore.userInfo.id}`)
 }
 
 const logout = async () => {

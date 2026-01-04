@@ -1,153 +1,184 @@
 <template>
-  <div class="profile-card">
-    <div v-if="userStore.token" class="profile-content">
-      <!-- 上部：头像和昵称 -->
-      <div class="profile-header">
-        <el-avatar :size="64" :src="userStore.userInfo.avatar || defaultAvatar" class="avatar" />
-        <div class="user-info">
-          <div class="nickname">{{ userStore.userInfo.nickname || userStore.userInfo.username || '用户' }}</div>
-        </div>
-      </div>
+  <div class="user-card">
+    <div class="avatar-wrapper">
+      <img :src="user?.avatar || defaultAvatar" alt="Avatar" class="avatar" @click="goToProfile">
+    </div>
 
-      <!-- 中部：数据统计 -->
-      <div class="stats">
-        <div class="stat-item">
-          <div class="stat-number">12</div>
-          <div class="stat-label">文章</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">156</div>
-          <div class="stat-label">关注</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">243</div>
-          <div class="stat-label">粉丝</div>
-        </div>
-      </div>
+    <div class="username">{{ user?.nickname || '用户' }}</div>
+    <div class="user-id" v-if="user?.id > 0">ID: {{ user.id }}</div>
 
-      <!-- 下部：收藏夹入口 -->
-      <div class="collections">
-        <div class="collection-item">
-          <el-icon><Star /></el-icon>
-          <span>收藏</span>
-        </div>
-        <div class="collection-item">
-          <el-icon><Document /></el-icon>
-          <span>文章</span>
-        </div>
-        <div class="collection-item">
-          <el-icon><ChatDotRound /></el-icon>
-          <span>话题</span>
-        </div>
+    <div class="stats">
+      <div class="stat-item" @click="goToArticles">
+        <span class="count">{{ user?.articleCount || 0 }}</span>
+        <span class="label">文章</span>
+      </div>
+      <div class="stat-item" @click="goToFollowing">
+        <span class="count">{{ user?.followingCount || 0 }}</span>
+        <span class="label">关注</span>
+      </div>
+      <div class="stat-item" @click="goToFollowers">
+        <span class="count">{{ user?.followerCount || 0 }}</span>
+        <span class="label">粉丝</span>
       </div>
     </div>
-    
-    <div v-else class="login-prompt">
-      <p>登录后体验完整功能</p>
-      <el-button type="primary" size="small" @click="userStore.openLoginModal('login')">
-        立即登录
-      </el-button>
+
+    <div class="actions" v-if="user?.id > 0">
+      <button class="btn" @click="goToArticles">文章</button>
+      <button class="btn" @click="goToCollections">收藏</button>
+      <button class="btn" @click="goToTopics">话题</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user'
-import { Star, Document, ChatDotRound } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
-const userStore = useUserStore()
+const props = defineProps({
+  user: {
+    type: Object,
+    default: () => ({})
+  }
+})
 
+const router = useRouter()
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+
+const goToProfile = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}`)
+  }
+}
+
+const goToArticles = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}/articles`)
+  }
+}
+
+const goToCollections = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}/collections`)
+  }
+}
+
+const goToTopics = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}/topics`)
+  }
+}
+
+const goToFollowing = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}/following`)
+  }
+}
+
+const goToFollowers = () => {
+  if (props.user?.id) {
+    router.push(`/user/${props.user.id}/followers`)
+  }
+}
 </script>
 
 <style scoped>
-.profile-card {
-  background: #ffffff;
-  border-radius: 8px;
+.user-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--campus-border-radius);
   padding: 20px;
-  margin: 0 12px 20px;
-  border: 1px solid #e6e6e6;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.profile-header {
+  box-shadow: var(--campus-shadow);
   text-align: center;
-  margin-bottom: 16px;
+  transition: all 0.3s ease;
 }
 
-.avatar {
+.user-card:hover {
+  box-shadow: 0 8px 24px rgba(64, 158, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.avatar-wrapper {
   margin-bottom: 12px;
 }
 
-.user-info {
-  text-align: center;
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid var(--campus-primary);
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.nickname {
-  font-size: 16px;
+.avatar:hover {
+  transform: scale(1.05);
+}
+
+.username {
+  font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--campus-text-primary);
   margin-bottom: 4px;
+}
+
+.user-id {
+  font-size: 12px;
+  color: var(--campus-text-secondary);
+  margin-bottom: 16px;
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e6e6e6;
+  margin: 15px 0;
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .stat-item {
   text-align: center;
-}
-
-.stat-number {
-  font-size: 18px;
-  font-weight: bold;
-  color: #409EFF; /* 蓝色数字 */
-  margin-bottom: 2px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-}
-
-.collections {
-  display: flex;
-  justify-content: space-around;
-}
-
-.collection-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  flex: 1;
-  text-align: center;
+  transition: transform 0.2s ease;
+  padding: 4px 0;
 }
 
-.collection-item:hover {
-  background-color: #f5f7fa;
+.stat-item:hover {
+  transform: translateY(-2px);
 }
 
-.collection-item i, .collection-item span {
+.count {
+  font-size: 1.2em;
+  color: var(--campus-primary);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.label {
+  font-size: 0.8em;
+  color: var(--campus-text-secondary);
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--campus-border-radius);
+  cursor: pointer;
+  background: var(--campus-primary);
+  color: white;
   font-size: 12px;
-  color: #666;
+  transition: all 0.3s ease;
 }
 
-.login-prompt {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.login-prompt p {
-  margin: 0 0 15px;
-  font-size: 14px;
-  color: #666;
+.btn:hover {
+  background: var(--campus-primary-light);
+  transform: translateY(-1px);
 }
 </style>

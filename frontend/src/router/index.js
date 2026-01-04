@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import BasicLayout from '../layout/BasicLayout.vue'
 import HomeDashboard from '../views/HomeDashboard.vue'
 import WelcomeView from '../views/WelcomeView.vue'
+import UserProfilePage from '../views/UserProfilePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,6 +12,13 @@ const router = createRouter({
       path: '/',
       name: 'welcome',
       component: WelcomeView,
+    },
+    // 用户资料页面 - 直接访问
+    {
+      path: '/user/:id',
+      name: 'user-profile',
+      component: UserProfilePage,
+      meta: { title: '用户详情' }
     },
     // 应用主路径 - 登录后访问
     {
@@ -46,6 +54,36 @@ const router = createRouter({
           name: 'members',
           component: () => import('../views/MembersView.vue'),
           meta: { title: '成员' }
+        },
+        {
+          path: 'user/:id',
+          name: 'user-profile-app',
+          component: () => import('../views/UserProfilePage.vue'),
+          meta: { title: '用户详情' }
+        },
+        {
+          path: 'user/:id/articles',
+          name: 'user-articles',
+          component: () => import('../views/ArticlesView.vue'),
+          meta: { title: '用户文章' }
+        },
+        {
+          path: 'user/:id/following',
+          name: 'user-following',
+          component: () => import('../views/FollowingView.vue'),
+          meta: { title: '用户关注' }
+        },
+        {
+          path: 'user/:id/followers',
+          name: 'user-followers',
+          component: () => import('../views/FollowersView.vue'),
+          meta: { title: '用户粉丝' }
+        },
+        {
+          path: 'search',
+          name: 'search',
+          component: () => import('../views/SearchResultPage.vue'),
+          meta: { title: '搜索结果' }
         },
         {
           path: 'about',
