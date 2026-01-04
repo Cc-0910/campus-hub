@@ -1,10 +1,14 @@
-import request from '@/utils/request'
+import request from '@/utils/request';
 
-// 搜索接口
-export function search(keyword) {
-  return request({
-    url: '/search',
-    method: 'get',
-    params: { keyword }
-  })
-}
+export const searchAPI = {
+  // Search with keyword
+  search: (keyword) => {
+    return request({
+      url: '/search',
+      method: 'get',
+      params: {
+        keyword
+      }
+    });
+  }
+};

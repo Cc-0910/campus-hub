@@ -13,4 +13,20 @@
         </where>
     </select>
     
+    <select id="searchPosts" resultType="com.edu.example.backend.vo.SearchResultVO">
+        SELECT 
+            id,
+            title,
+            SUBSTRING(content, 1, 100) as summary,
+            'post' as type
+        FROM campus_hub_article
+        <where>
+            status = 1
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') 
+                OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+    
 </mapper>

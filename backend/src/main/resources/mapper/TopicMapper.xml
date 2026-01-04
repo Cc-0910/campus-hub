@@ -12,4 +12,19 @@
         </where>
     </select>
     
+    <select id="searchTopics" resultType="com.edu.example.backend.vo.SearchResultVO">
+        SELECT 
+            id,
+            name as title,
+            description as summary,
+            'topic' as type
+        FROM campus_hub_topic
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+    
 </mapper>

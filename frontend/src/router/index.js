@@ -85,7 +85,7 @@ const router = createRouter({
           path: 'search',
           name: 'search',
           component: () => import('../views/SearchResultPage.vue'),
-          meta: { title: '搜索结果' }
+          meta: { title: '搜索结果', requiresAuth: false }
         },
       ],
     },

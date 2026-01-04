@@ -74,11 +74,7 @@
           <h1 class="banner-title">你好啊，CSUer</h1>
           <p class="banner-subtitle">欢迎访问中南论坛</p>
           <div class="search-box">
-            <el-input 
-              placeholder="搜索话题、文章或用户..." 
-              :prefix-icon="Search" 
-              class="search-input"
-            />
+            <SearchBar />
           </div>
         </div>
       </div>
@@ -122,6 +118,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import SideProfileCard from '@/components/SideProfileCard.vue'
 import CursorBoom from '@/components/Effects/CursorBoom.vue'
 import ClickExplosion from '@/components/Effects/ClickExplosion.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import {
   House,
   ChatDotRound,
