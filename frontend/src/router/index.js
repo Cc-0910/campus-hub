@@ -80,7 +80,21 @@ const router = createRouter({
           component: () => import('../views/AboutView.vue'),
           meta: { title: '关于' }
         },
+        // 搜索结果页面
+        {
+          path: 'search',
+          name: 'search',
+          component: () => import('../views/SearchResultPage.vue'),
+          meta: { title: '搜索结果' }
+        },
       ],
+    },
+    // 搜索结果页面 - 直接访问
+    {
+      path: '/search',
+      name: 'search-direct',
+      component: () => import('../views/SearchResultPage.vue'),
+      meta: { title: '搜索结果' }
     },
   ],
 })
