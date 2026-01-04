@@ -334,6 +334,19 @@ const handleEditorModeChange = (mode: string) => {
   console.log('编辑器模式变化:', mode)
 }
 
+// 监听路由参数变化
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadTopicDetail()
+    // 根据当前活跃标签重新加载内容
+    if (activeTab.value === 'articles') {
+      loadArticles()
+    } else if (activeTab.value === 'questions') {
+      loadQuestions()
+    }
+  }
+})
+
 // 监听标签切换
 watch(activeTab, (newTab) => {
   if (newTab === 'articles') {

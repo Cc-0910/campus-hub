@@ -231,8 +231,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import type { UploadFile, UploadRawFile } from 'element-plus'
 import { 
-  Edit, Minus, Close, Document, Delete, Plus 
+  Edit, Minus, Close, Document, Delete, Plus, Upload 
 } from '@element-plus/icons-vue'
 import type { EditorType, EditorMode, EditorContent, EditorConfig } from '@/types/editor'
 import type { Topic } from '@/types/topic'
@@ -300,20 +301,23 @@ const emojis = ref([
 const availableTopics = computed(() => mockTopics)
 
 const config = computed<EditorConfig>(() => {
-  const configs = {
+  const configs: Record<EditorType, EditorConfig> = {
     article: {
+      type: 'article',
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入文章标题...',
       submitText: '发布文章'
     },
     question: {
+      type: 'question',
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入问题标题...',
       submitText: '发布问题'
     },
     comment: {
+      type: 'comment',
       isNeedTopic: false,
       showTitle: false,
       placeholder: '写点评论...',
@@ -322,10 +326,8 @@ const config = computed<EditorConfig>(() => {
   }
   return configs[editorType.value]
 })
-
 const isNeedTopic = computed(() => config.value.isNeedTopic)
 const showTitle = computed(() => config.value.showTitle)
-
 const canSubmit = computed(() => {
   const hasContent = editorContent.value.content.trim().length > 0
   const hasTitle = !showTitle.value || (editorContent.value.title && editorContent.value.title.trim().length > 0)
@@ -333,38 +335,31 @@ const canSubmit = computed(() => {
   
   return hasContent && hasTitle && hasTopic
 })
-
 const emojiCategories = computed(() => {
-  return [...new Set(emojis.value.map(e => e.category))]
+  return Array.from(new Set(emojis.value.map(e => e.category)))
 })
-
 const filteredEmojis = computed(() => {
   return emojis.value.filter(e => e.category === emojiCategory.value)
 })
-
 // 方法
 const expandEditor = () => {
   mode.value = 'expanded'
   emit('modeChange', 'expanded')
 }
-
 const minimizeEditor = () => {
   mode.value = 'minimized'
   emit('modeChange', 'minimized')
 }
-
 const closeEditor = () => {
   mode.value = 'minimized'
   emit('close')
 }
-
 const onContentChange = () => {
   if (editorRef.value) {
     editorContent.value.content = editorRef.value.innerHTML
     contentLength.value = editorRef.value.textContent?.length || 0
   }
 }
-
 const getContentPlaceholder = () => {
   const placeholders = {
     article: '开始撰写您的文章内容...',
@@ -373,20 +368,17 @@ const getContentPlaceholder = () => {
   }
   return placeholders[editorType.value]
 }
-
 // 格式化方法
 const toggleBold = () => {
   document.execCommand('bold')
   isBold.value = document.queryCommandState('bold')
   focusEditor()
 }
-
 const toggleItalic = () => {
   document.execCommand('italic')
   isItalic.value = document.queryCommandState('italic')
   focusEditor()
 }
-
 const insertLink = () => {
   const url = prompt('请输入链接地址:')
   if (url) {
@@ -394,7 +386,6 @@ const insertLink = () => {
     focusEditor()
   }
 }
-
 const insertCode = () => {
   const code = '<div style="background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 16px; margin: 8px 0; font-family: \'Courier New\', monospace; font-size: 14px; line-height: 1.5;">' +
                '<div style="color: #6a737d; margin-bottom: 8px;">// 在这里输入代码</div>' +
@@ -402,12 +393,10 @@ const insertCode = () => {
                '</div>'
   insertTextAtCursor(code)
 }
-
 const insertEmoji = (emoji: string) => {
   insertTextAtCursor(emoji)
   showEmojiPicker.value = false
 }
-
 const insertTextAtCursor = (text: string) => {
   if (editorRef.value) {
     const selection = window.getSelection()
@@ -471,13 +460,11 @@ const insertTextAtCursor = (text: string) => {
     focusEditor()
   }
 }
-
 const focusEditor = () => {
   if (editorRef.value) {
     editorRef.value.focus()
   }
 }
-
 const clearContent = () => {
   if (editorRef.value) {
     editorRef.value.innerHTML = ''
@@ -485,7 +472,6 @@ const clearContent = () => {
   }
   editorContent.value.title = ''
 }
-
 const handlePaste = (event: ClipboardEvent) => {
   const items = event.clipboardData?.items
   if (items) {
@@ -494,15 +480,14 @@ const handlePaste = (event: ClipboardEvent) => {
         event.preventDefault()
         const file = items[i].getAsFile()
         if (file) {
-          handleImageUpload({ raw: file })
+          handleImageUpload({ raw: file as UploadRawFile })
         }
         return
       }
     }
   }
 }
-
-const handleImageUpload = (file: any) => {
+const handleImageUpload = (file: { raw: UploadRawFile }) => {
   const reader = new FileReader()
   reader.onload = (e) => {
     const img = document.createElement('img')
@@ -513,7 +498,6 @@ const handleImageUpload = (file: any) => {
   }
   reader.readAsDataURL(file.raw)
 }
-
 const insertImageFromUrl = () => {
   if (imageUrl.value) {
     const img = document.createElement('img')
@@ -525,7 +509,6 @@ const insertImageFromUrl = () => {
     showImageUpload.value = false
   }
 }
-
 const insertElementAtCursor = (element: HTMLElement) => {
   if (editorRef.value) {
     const selection = window.getSelection()
@@ -540,7 +523,6 @@ const insertElementAtCursor = (element: HTMLElement) => {
     onContentChange()
   }
 }
-
 const submitContent = async () => {
   if (!canSubmit.value) return
   
@@ -567,7 +549,6 @@ const submitContent = async () => {
     submitting.value = false
   }
 }
-
 // 监听器
 watch(editorType, (newType) => {
   editorContent.value.type = newType
@@ -576,11 +557,9 @@ watch(editorType, (newType) => {
     currentTopicId.value = undefined
   }
 })
-
 watch(currentTopicId, (newTopicId) => {
   editorContent.value.topicId = newTopicId
 })
-
 // 生命周期
 onMounted(() => {
   nextTick(() => {
@@ -589,6 +568,7 @@ onMounted(() => {
     }
   })
 })
+
 </script>
 
 <style scoped>

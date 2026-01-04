@@ -230,10 +230,16 @@ const openLoginModal = (tabName) => {
 
 .greeting {
   color: white;
-  font-size: 3.5rem;
-  font-weight: 700;
+  /* 使用楷体字栈 */ 
+  font-family: 'KaiTi', 'STKaiti', '楷体', serif;
+  font-size: 2.8rem;
+  /* 关键：不加粗，保持修长 */
+  font-weight: normal;
   margin-bottom: 16px;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  /* 增加字间距，更舒展 */ 
+  letter-spacing: 4px;
+  /* 精致的文字阴影，增强立体感但不过分厚重 */ 
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
   background: linear-gradient(45deg, #ffffff, #e3f2fd);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -242,9 +248,15 @@ const openLoginModal = (tabName) => {
 
 .welcome-subtitle {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1.3rem;
+  /* 使用楷体字栈 */ 
+  font-family: 'KaiTi', 'STKaiti', '楷体', serif;
+  font-size: 1.2rem;
+  /* 关键：不加粗 */
+  font-weight: normal;
   margin-bottom: 50px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  /* 增加字间距，更舒展 */
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .feature-cards {
@@ -382,11 +394,15 @@ const openLoginModal = (tabName) => {
   }
   
   .greeting {
+    font-family: 'KaiTi', 'STKaiti', '楷体', serif;
     font-size: 2.5rem;
+    letter-spacing: 3px; /* 响应式调整字间距 */
   }
   
   .welcome-subtitle {
+    font-family: 'KaiTi', 'STKaiti', '楷体', serif;
     font-size: 1.1rem;
+    letter-spacing: 1.5px; /* 响应式调整字间距 */
   }
   
   .feature-cards {

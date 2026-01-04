@@ -30,15 +30,6 @@
         <!-- 弹性占位，把后面的元素推向右边 -->
         <div style="flex: 1"></div>
         
-        <!-- 搜索框 -->
-        <div class="search-box">
-          <el-input 
-            placeholder="搜索话题、文章或用户..." 
-            :prefix-icon="Search" 
-            class="search-input"
-          />
-        </div>
-        
         <!-- 最右侧：通知图标、用户头像 -->
         <div class="header-right">
           <!-- 未登录状态 -->
@@ -82,6 +73,13 @@
         <div class="banner-content text-center">
           <h1 class="banner-title">你好啊，CSUer</h1>
           <p class="banner-subtitle">欢迎访问中南论坛</p>
+          <div class="search-box">
+            <el-input 
+              placeholder="搜索话题、文章或用户..." 
+              :prefix-icon="Search" 
+              class="search-input"
+            />
+          </div>
         </div>
       </div>
       <div class="scroll-down-arrow" @click="scrollToContent">
@@ -344,28 +342,33 @@ const logout = async () => {
 }
 
 .search-box {
-  width: 260px;
-  margin: 0 20px;
+  width: 100%;
+  max-width: 580px;
+  margin: 40px auto 0;
 }
 
 .search-input :deep(.el-input__wrapper) {
-  background-color: rgba(255, 255, 255, 0.2); /* 半透明白色背景 */
-  border: none;
+  background-color: rgba(255, 255, 255, 0.15); /* 半透明白色背景 */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 极细半透明边框 */
   box-shadow: none;
-  border-radius: 4px;
+  border-radius: 30px; /* 完全圆润的胶囊状 */
+  height: 50px; /* 增加高度 */
 }
 
 .search-input :deep(.el-input__wrapper):hover {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  background-color: rgba(255, 255, 255, 0.25); /* 悬停时背景稍亮 */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* 轻微发光阴影 */
 }
 
 .search-input :deep(.el-input__wrapper):focus {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  background-color: rgba(255, 255, 255, 0.25); /* 聚焦时背景稍亮 */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* 轻微发光阴影 */
 }
 
 .search-input :deep(.el-input__inner) {
   color: #ffffff;
   background-color: transparent;
+  height: 48px; /* 调整内部高度以适应新的容器 */
 }
 
 .search-input :deep(.el-input__inner::placeholder) {
@@ -374,6 +377,11 @@ const logout = async () => {
 
 .search-input :deep(.el-input__prefix) {
   color: rgba(255, 255, 255, 0.8);
+  margin-left: 15px;
+}
+
+.search-input :deep(.el-input__suffix) {
+  margin-right: 15px;
 }
 
 .header-right {
@@ -469,10 +477,6 @@ const logout = async () => {
 
 /* 适配小屏幕 */
 @media (max-width: 768px) {
-  .search-box {
-    display: none;
-  }
-  
   .aside {
     width: 60px !important;
   }
@@ -516,16 +520,38 @@ const logout = async () => {
 }
 .banner-container { position: relative; z-index: 2; text-align: center; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Shadow for readability on image */ padding: 0 20px; }
 
-.banner-title { font-size: 3.5rem; font-weight: 600; margin-bottom: 1rem; }
+.banner-title { 
+  /* 使用楷体字栈 */ 
+  font-family: 'KaiTi', 'STKaiti', '楷体', serif; 
+  /* 保持原有大小 */ 
+  font-size: 2.8rem; 
+  /* 关键：不加粗，保持修长 */ 
+  font-weight: normal; 
+  margin-bottom: 1rem; 
+  /* 增加字间距，更舒展 */ 
+  letter-spacing: 4px; 
+  /* 精致的文字阴影，增强立体感但不过分厚重 */ 
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); 
+} 
 
-.banner-subtitle { font-size: 1.5rem; font-weight: 300; opacity: 0.9; }
+.banner-subtitle { 
+  /* 使用楷体字栈 */ 
+  font-family: 'KaiTi', 'STKaiti', '楷体', serif; 
+  font-size: 1.2rem; 
+  /* 关键：不加粗 */ 
+  font-weight: normal; 
+  opacity: 0.95; /* 稍微提高一点不透明度提升清晰度 */ 
+  /* 增加字间距，更舒展 */ 
+  letter-spacing: 2px; 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); 
+}
 
 /* Arrow Animation */
-.scroll-down-arrow { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 2rem; cursor: pointer; animation: bounce 2s infinite; }
+.scroll-down-arrow { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 2rem; cursor: pointer; }
 
 .fallback-arrow { display: block; margin: 0 auto; }
 
-@keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); } 40% { transform: translateX(-50%) translateY(-20px); } 60% { transform: translateX(-50%) translateY(-10px); } }
+
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -3,11 +3,11 @@ server:
 
 spring:
   application:
-    name: campus-hub
+    name: campus_hub
   datasource:
     url: jdbc:mysql://localhost:3306/campus_hub?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 8888
+    password: 888
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:

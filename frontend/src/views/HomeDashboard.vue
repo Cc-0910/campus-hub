@@ -1,9 +1,6 @@
 <template>
   <div class="home-dashboard">
-    <div class="welcome-banner">
-      <h2>欢迎来到中南论坛</h2>
-      <p>发现校园生活的精彩话题与问答，探索知识的海洋</p>
-    </div>
+
 
     <el-row :gutter="20" class="section-row">
       <el-col :span="24">
@@ -118,7 +115,11 @@ import {
 const router = useRouter()
 
 const goToDetail = (type, id) => { // 简单的路由跳转逻辑，后续可根据实际路由调整
-  router.push(`/app/${type}/${id}`)
+  if (type === 'topic') {
+    router.push(`/app/topics/${id}`)
+  } else {
+    router.push(`/app/${type}/${id}`)
+  }
 }
 
 // --- 模拟数据 (Mock Data) - API Contract Compliant ---
