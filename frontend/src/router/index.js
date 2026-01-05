@@ -80,6 +80,12 @@ const router = createRouter({
           component: () => import('../views/AboutView.vue'),
           meta: { title: '关于' }
         },
+        {
+          path: 'user/:id',
+          name: 'user-profile',
+          component: () => import('../views/UserProfilePage.vue'),
+          meta: { title: '用户资料', requiresAuth: false }
+        },
         // 搜索结果页面
         {
           path: 'search',

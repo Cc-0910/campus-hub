@@ -44,7 +44,7 @@
           <!-- 已登录状态 -->
           <div v-else class="user-info">
             <el-button type="default" :icon="Bell" circle class="notification-btn" />
-            <el-dropdown>
+            <el-dropdown @command="handleCommand">
               <div class="user-avatar">
                 <el-avatar :size="40" :src="userStore.userInfo.avatar || defaultAvatar">
                   {{ userStore.userInfo.nickname ? userStore.userInfo.nickname.charAt(0) : 'U' }}
@@ -52,14 +52,14 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="goToProfile">个人资料</el-dropdown-item>
+                  <el-dropdown-item command="profile">个人资料</el-dropdown-item>
                   <el-dropdown-item 
                     v-if="userStore.userInfo.role === 'admin'" 
-                    @click="goToAdminTopics"
+                    command="admin-topics"
                   >
                     话题管理
                   </el-dropdown-item>
-                  <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+                  <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -179,13 +179,22 @@ const getPageTitle = () => {
   return route.meta.title || '首页'
 }
 
-const goToProfile = () => {
-  // 跳转到个人资料页面（待实现）
-  ElMessage.info('个人资料页面待实现')
-}
+const handleCommand = (command) => {
+  if (command === 'profile') {
+    const userId = userStore.userInfo?.id || userStore.userInfo?.userId;
+    console.log('尝试跳转，当前用户ID:', userId);
 
-const goToAdminTopics = () => {
-  router.push('/app/admin/topics')
+    if (userId) {
+      router.push(`/user/${userId}`);
+    } else {
+      ElMessage.error('无法跳转：未找到用户ID，请重新登录');
+      console.error('用户信息缺失:', userStore.userInfo);
+    }
+  } else if (command === 'admin-topics') {
+    router.push('/app/admin/topics');
+  } else if (command === 'logout') {
+    logout();
+  }
 }
 
 const logout = async () => {
