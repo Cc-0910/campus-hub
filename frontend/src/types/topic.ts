@@ -13,7 +13,7 @@ export interface TopicListResponse {
   code: number
   data: Topic[]
   total: number
-  msg: string
+  message: string
 }
 
 export interface FollowTopicRequest {

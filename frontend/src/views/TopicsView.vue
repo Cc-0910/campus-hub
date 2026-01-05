@@ -5,8 +5,8 @@
       <h1 class="page-title">话题总览</h1>
       <div class="sort-options">
         <el-radio-group v-model="sortBy" @change="loadTopics">
-          <el-radio-button label="followerCount">按关注人数</el-radio-button>
-          <el-radio-button label="createdAt">按创建时间</el-radio-button>
+          <el-radio-button value="followerCount">按关注人数</el-radio-button>
+          <el-radio-button value="createdAt">按创建时间</el-radio-button>
         </el-radio-group>
       </div>
     </div>

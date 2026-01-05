@@ -3,7 +3,8 @@ package com.edu.example.backend.controller;
 import com.edu.example.backend.common.Result;
 import com.edu.example.backend.entity.Topic;
 import com.edu.example.backend.service.TopicService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,11 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/topics")
 public class TopicController {
+    
+    private static final Logger log = LoggerFactory.getLogger(TopicController.class);
 
     @Autowired
     private TopicService topicService;

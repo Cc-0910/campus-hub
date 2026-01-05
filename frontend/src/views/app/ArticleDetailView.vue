@@ -21,18 +21,18 @@
                   <span>{{ articleDetail.viewCount || 0 }} 浏览</span>
                 </div>
                 <div class="stat-item">
-                  <el-icon><Star /></el-icon>
-                  <span>{{ articleDetail.likeCount || 0 }} 点赞</span>
-                </div>
-                <div class="stat-item">
                   <el-icon><ChatLineRound /></el-icon>
                   <span>{{ commentCount }} 评论</span>
+                </div>
+                <div class="stat-item">
+                  <el-icon><Star /></el-icon>
+                  <span>{{ articleDetail.likeCount || 0 }} 收藏</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 文章标签 -->
+          <!-- 话题标签 -->
           <div v-if="articleDetail.topics && articleDetail.topics.length > 0" class="article-topics">
             <el-tag 
               v-for="topic in articleDetail.topics" 
@@ -57,7 +57,7 @@
               :icon="Star" 
               @click="toggleLike"
             >
-              {{ isLiked ? '已点赞' : '点赞' }} {{ articleDetail.likeCount || 0 }}
+              {{ isLiked ? '已收藏' : '收藏' }} {{ articleDetail.likeCount || 0 }}
             </el-button>
             <el-button 
               :type="isStared ? 'warning' : 'default'" 
@@ -174,7 +174,7 @@
                   <div class="reply-content">
                     <span class="reply-author">{{ reply.user?.nickname || '匿名用户' }}</span>
                     <span class="reply-separator">回复</span>
-                    <span class="reply-target">{{ reply.replyToUser?.nickname || '用户' }}:</span>
+                    <span class="reply-target">{{ reply.replyToUser?.nickname || '用户' }}</span>:
                     <span class="reply-text">{{ reply.content }}</span>
                   </div>
                   <div class="reply-meta">
@@ -192,20 +192,19 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import {
-  View,
-  ChatLineRound,
-  Star,
+import { 
+  View, 
+  ChatLineRound, 
+  Star, 
   Share,
   Edit
 } from '@element-plus/icons-vue'
-import { commentApi } from '@/api/comment'
-import { topicApi } from '@/api/topic'
 import request from '@/utils/request'
+import { commentApi } from '@/api/comment'
 import { usePostStore } from '@/stores/post'
 
 // 路由
@@ -231,14 +230,27 @@ const postStore = usePostStore()
 // 生成随机文章内容
 const generateRandomArticleContent = () => {
   const articleContents = [
-    `<p>在大学校园里，生活的方方面面都需要我们自己去管理和规划。从学习到生活，从社交到个人成长，每一个环节都至关重要。</p><p>首先，学习是大学生活的核心。我们需要合理安排时间，制定学习计划，充分利用图书馆和自习室等资源。同时，也要积极参与课堂讨论，与老师和同学保持良好的沟通。</p><p>其次，生活方面也不能忽视。保持健康的饮食习惯，定期进行体育锻炼，保证充足的睡眠，这些都是保持良好状态的基础。此外，学会理财也是一项重要的技能，可以帮助我们更好地管理自己的生活费用。</p><p>最后，社交和个人成长也同样重要。参加社团活动，结交志同道合的朋友，培养自己的兴趣爱好，这些都有助于我们拓展视野，提高自己的综合素质。</p><p>总之，大学生活是一段宝贵的经历，我们应该珍惜这段时光，努力让自己变得更加优秀。</p>`,
-    `<p>随着互联网技术的不断发展，新媒体已经成为我们生活中不可或缺的一部分。从社交媒体到短视频平台，从博客到直播，新媒体的形式多种多样，影响着我们的生活方式和思维方式。</p><p>新媒体的出现为我们提供了更多的信息获取渠道和表达方式。我们可以通过社交媒体了解时事新闻，通过短视频学习新知识，通过博客分享自己的观点和经验。同时，新媒体也为企业和个人提供了更多的营销和推广渠道。</p><p>然而，新媒体的发展也带来了一些问题。信息过载、虚假信息、隐私泄露等问题日益突出，需要我们保持警惕。此外，过度依赖新媒体也可能影响我们的现实社交能力和专注力。</p><p>因此，我们应该理性看待新媒体，充分利用其优势，同时也要注意避免其带来的负面影响。只有这样，我们才能更好地适应新媒体时代的发展。</p>`,
-    `<p>环境保护是当今世界面临的重要挑战之一。随着工业化和城市化的加速发展，环境污染、资源短缺、气候变化等问题日益严重，威胁着人类的生存和发展。</p><p>为了应对这些挑战，我们需要采取一系列措施。首先，政府应该加强环境立法和执法力度，制定严格的环境标准，限制污染物的排放。其次，企业应该承担起社会责任，采用环保技术和生产方式，减少对环境的破坏。</p><p>此外，个人的力量也不可忽视。我们可以从身边的小事做起，比如节约水电、减少使用一次性用品、垃圾分类等。同时，也要积极参与环保宣传和公益活动，提高公众的环保意识。</p><p>环境保护是一项长期而艰巨的任务，需要政府、企业和个人的共同努力。只有这样，我们才能保护好我们的地球家园，为子孙后代创造一个美好的未来。</p>`
+    `<p>在学习Vue3的过程中，我发现组合式API相比选项式API有很多优势。特别是在代码组织和复用方面，组合式API提供了更大的灵活性。本文将分享我在使用Vue3组合式API开发项目时的一些经验和心得。</p><h3>组合式API的基本概念</h3><p>组合式API的核心是setup函数，它在组件实例创建之前执行。在setup函数中，我们可以定义响应式数据、计算属性、方法等，并通过return语句将它们暴露给模板使用。</p><h3>响应式数据的创建</h3><p>在组合式API中，我们可以使用ref和reactive函数来创建响应式数据。ref函数用于创建基本类型的响应式数据，而reactive函数用于创建对象类型的响应式数据。</p>`,
+    `<p>Spring Boot是一个基于Spring框架的快速开发框架，它提供了自动配置、起步依赖等功能，大大简化了Spring应用的开发过程。本文将介绍Spring Boot的基本概念和使用方法。</p><h3>Spring Boot的核心特性</h3><p>Spring Boot的核心特性包括：自动配置、起步依赖、嵌入式Web服务器、无代码生成等。这些特性使得Spring Boot应用的开发变得更加简单和高效。</p><h3>Spring Boot的基本使用</h3><p>使用Spring Boot开发应用非常简单，只需要创建一个Maven或Gradle项目，添加相应的起步依赖，然后编写业务代码即可。Spring Boot会自动配置应用所需的各种组件。</p>`,
+    `<p>Python是一种高级编程语言，它具有简洁、易读、易维护等特点。Python在数据分析、人工智能、Web开发等领域都有广泛的应用。本文将介绍Python的基本语法和常用库。</p><h3>Python的基本语法</h3><p>Python的基本语法包括：变量、数据类型、控制结构、函数、类等。Python的语法非常简洁，易于学习和使用。</p><h3>Python的常用库</h3><p>Python有很多常用的库，如NumPy、Pandas、Matplotlib、TensorFlow等。这些库提供了丰富的功能，可以帮助我们快速完成各种任务。</p>`,
+    `<p>React是一个用于构建用户界面的JavaScript库，它由Facebook开发和维护。React采用组件化的开发方式，使得UI的开发变得更加简单和高效。本文将介绍React的基本概念和使用方法。</p><h3>React的核心概念</h3><p>React的核心概念包括：组件、Props、State、JSX等。这些概念是理解和使用React的基础。</p><h3>React的基本使用</h3><p>使用React开发应用需要先安装React和React DOM，然后创建React组件，最后将组件渲染到DOM中。React提供了丰富的API和工具，可以帮助我们快速开发高质量的UI。</p>`,
+    `<p>数据结构是计算机科学中的重要概念，它是组织和存储数据的方式。不同的数据结构适用于不同的应用场景，选择合适的数据结构可以提高程序的效率。本文将介绍几种常用的数据结构。</p><h3>线性数据结构</h3><p>线性数据结构包括：数组、链表、栈、队列等。这些数据结构的特点是数据元素之间存在线性关系。</p><h3>非线性数据结构</h3><p>非线性数据结构包括：树、图、哈希表等。这些数据结构的特点是数据元素之间存在非线性关系。</p>`,
+    `<p>算法是解决问题的步骤和方法，它是计算机科学的核心内容之一。不同的算法适用于不同的问题，选择合适的算法可以提高程序的效率。本文将介绍几种常用的算法。</p><h3>排序算法</h3><p>排序算法是将一组数据按照一定的顺序排列的算法。常用的排序算法包括：冒泡排序、选择排序、插入排序、快速排序、归并排序等。</p><h3>搜索算法</h3><p>搜索算法是在一组数据中查找特定元素的算法。常用的搜索算法包括：线性搜索、二分搜索等。</p>`
   ]
 
   const userNames = [
-    '校园作家', '生活达人', '科技爱好者', '环保志愿者', '文艺青年',
-    '旅行博主', '美食家', '健身教练', '摄影爱好者', '历史迷'
+    '编程新手', '前端工程师', '后端开发者', '全栈程序员', '算法爱好者',
+    '校园开发者', '技术博主', '产品经理', '设计师', '架构师',
+    '移动开发工程师', 'Python爱好者', 'Java开发者', '数据分析爱好者', 'DevOps工程师'
+  ]
+
+  const topicsList = [
+    [{ id: 1, name: '编程技术' }, { id: 2, name: '学习经验' }],
+    [{ id: 3, name: '前端开发' }, { id: 4, name: 'Vue.js' }],
+    [{ id: 5, name: '后端开发' }, { id: 6, name: 'Spring Boot' }],
+    [{ id: 7, name: '数据结构' }, { id: 8, name: '算法' }],
+    [{ id: 9, name: '移动开发' }, { id: 10, name: 'React Native' }],
+    [{ id: 11, name: 'Python' }, { id: 12, name: '异步编程' }]
   ]
 
   // 随机生成文章详情
@@ -254,10 +266,7 @@ const generateRandomArticleContent = () => {
     viewCount: Math.floor(Math.random() * 1000),
     likeCount: Math.floor(Math.random() * 100),
     commentCount: Math.floor(Math.random() * 50),
-    topics: [
-      { id: 3, name: '校园生活' },
-      { id: 4, name: '生活感悟' }
-    ]
+    topics: topicsList[Math.floor(Math.random() * topicsList.length)]
   }
 }
 
@@ -328,16 +337,16 @@ const fetchComments = async () => {
 // 生成随机评论
 const generateRandomComments = () => {
   const commentContents = [
-    '这篇文章写得非常好，受益匪浅！',
-    '感谢分享，学到了很多新知识。',
-    '内容很有深度，值得仔细阅读。',
-    '写得很详细，对我帮助很大。',
-    '观点很独特，让我有了新的思考。',
-    '例子很生动，容易理解。',
-    '期待更多类似的文章！',
-    '分析得很到位，赞一个！',
-    '内容很实用，谢谢分享。',
-    '很棒的文章，已收藏。'
+    '这篇文章写得非常好，对我很有帮助！',
+    '感谢作者的分享，学到了很多新知识。',
+    '文章内容很详细，解释得很清楚。',
+    '这个问题确实值得深入探讨，期待作者的后续文章。',
+    '我有一个不同的观点，可能可以尝试一下...',
+    '文章中的代码示例很实用，感谢分享。',
+    '我之前也遇到过类似的问题，后来通过...解决了。',
+    '这个话题涉及到很多方面，需要仔细分析。',
+    '期待看到更多人参与讨论。',
+    '文章提得很好，很有启发性。'
   ]
 
   const userNames = [
@@ -388,23 +397,23 @@ const generateRandomComments = () => {
   commentCount.value = commentsList.length
 }
 
-// 生成随机推荐文章
+// 生成随机推荐内容
 const generateRandomRelatedArticles = () => {
   const recommendTitles = [
-    '校园生活指南',
-    '大学生学习方法分享',
-    '如何平衡学习与社团活动',
-    '校园美食地图',
-    '大学生理财入门',
-    '实习经验分享',
-    '校园活动策划指南',
-    '如何提高英语口语',
-    '大学生心理健康小贴士',
-    '毕业季就业准备'
+    'Vue3组合式API最佳实践',
+    'Spring Boot性能优化技巧',
+    '前端工程化实践指南',
+    '如何学习数据结构与算法',
+    '移动开发跨平台方案对比',
+    'Python异步编程深入解析',
+    '微服务架构设计原则',
+    '前端性能优化实战',
+    '数据库设计最佳实践',
+    'DevOps工具链搭建'
   ]
   
   const userNames = [
-    '校园作家', '生活达人', '学习委员', '社团主席', '实习达人'
+    '编程新手', '前端工程师', '后端开发者', '全栈程序员', '算法爱好者'
   ]
   
   const relatedList = []
@@ -468,15 +477,15 @@ const formatTime = (time) => {
   return '刚刚'
 }
 
-// 切换点赞状态
+// 切换收藏状态
 const toggleLike = () => {
   isLiked.value = !isLiked.value
   if (isLiked.value) {
     articleDetail.value.likeCount = (articleDetail.value.likeCount || 0) + 1
-    ElMessage.success('已点赞')
+    ElMessage.success('已收藏')
   } else {
     articleDetail.value.likeCount = Math.max(0, (articleDetail.value.likeCount || 0) - 1)
-    ElMessage.info('已取消点赞')
+    ElMessage.info('已取消收藏')
   }
 }
 
@@ -530,7 +539,7 @@ const replyToComment = (comment) => {
 
 // 跳转到详情页
 const goToDetail = (id) => {
-  router.push(`/app/articles/${id}`)
+  router.push(`/app/article/${id}`)
 }
 
 // 初始化数据
@@ -539,15 +548,6 @@ onMounted(async () => {
   await fetchComments()
   await fetchRelatedArticles()
 })
-
-const goBack = () => {
-  // 返回上一页或话题详情页
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    router.push('/app/topics')
-  }
-}
 </script>
 
 <style scoped>

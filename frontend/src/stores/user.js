@@ -16,10 +16,12 @@ export const useUserStore = defineStore(
 
     // Actions
     const login = async (username, password) => {
+      // 首先尝试真实API，如果失败则使用模拟登录
       try {
-        // 使用模拟登录（在没有后端服务时）
-        const res = await mockLogin(username, password)
-        
+        const res = await request.post('/auth/login', {
+          username,
+          password
+        })
         token.value = res.data.token
         userInfo.value = {
           id: res.data.userInfo.id,
@@ -29,17 +31,13 @@ export const useUserStore = defineStore(
           role: res.data.userInfo.role
         }
         
-        // 登录成功后跳转到 /app
         await router.push('/app')
-        
         return res
       } catch (error) {
-        // 如果模拟登录失败，尝试真实API（用于开发环境切换）
+        // 如果真实API失败，尝试模拟登录
         try {
-          const res = await request.post('/auth/login', {
-            username,
-            password
-          })
+          const res = await mockLogin(username, password)
+          
           token.value = res.data.token
           userInfo.value = {
             id: res.data.userInfo.id,
@@ -49,20 +47,25 @@ export const useUserStore = defineStore(
             role: res.data.userInfo.role
           }
           
+          // 登录成功后跳转到 /app
           await router.push('/app')
+          
           return res
-        } catch (realError) {
-          throw new Error(error.message || '登录失败')
+        } catch (mockError) {
+          throw new Error(mockError.message || error.message || '登录失败')
         }
       }
     }
 
     const register = async (username, password, email) => {
+      // 首先尝试真实API，如果失败则使用模拟注册
       try {
-        // 使用模拟注册（在没有后端服务时）
-        const res = await mockRegister(username, password, email)
+        const res = await request.post('/auth/register', {
+          username,
+          password,
+          email
+        })
         
-        // 注册成功后直接使用返回的用户信息
         if (res.data && res.data.userInfo) {
           token.value = res.data.token
           userInfo.value = {
@@ -73,20 +76,16 @@ export const useUserStore = defineStore(
             role: res.data.userInfo.role
           }
           
-          // 注册成功后跳转到 /app
           await router.push('/app')
         }
         
         return res
       } catch (error) {
-        // 如果模拟注册失败，尝试真实API（用于开发环境切换）
+        // 如果真实API失败，尝试模拟注册
         try {
-          const res = await request.post('/auth/register', {
-            username,
-            password,
-            email
-          })
+          const res = await mockRegister(username, password, email)
           
+          // 注册成功后直接使用返回的用户信息
           if (res.data && res.data.userInfo) {
             token.value = res.data.token
             userInfo.value = {
@@ -97,12 +96,13 @@ export const useUserStore = defineStore(
               role: res.data.userInfo.role
             }
             
+            // 注册成功后跳转到 /app
             await router.push('/app')
           }
           
           return res
-        } catch (realError) {
-          throw new Error(error.message || '注册失败')
+        } catch (mockError) {
+          throw new Error(mockError.message || error.message || '注册失败')
         }
       }
     }

@@ -18,9 +18,9 @@
       <div class="editor-header">
         <div class="editor-tabs">
           <el-radio-group v-model="editorType" size="small">
-            <el-radio-button label="article">写文章</el-radio-button>
-            <el-radio-button label="question">提问题</el-radio-button>
-            <el-radio-button label="comment">写评论</el-radio-button>
+            <el-radio-button value="article">写文章</el-radio-button>
+            <el-radio-button value="question">提问题</el-radio-button>
+            <el-radio-button value="comment">写评论</el-radio-button>
           </el-radio-group>
         </div>
         <div class="editor-actions">
@@ -303,21 +303,21 @@ const availableTopics = computed(() => mockTopics)
 const config = computed<EditorConfig>(() => {
   const configs: Record<EditorType, EditorConfig> = {
     article: {
-      type: 'article',
+      type: 'article' as EditorType,
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入文章标题...',
       submitText: '发布文章'
     },
     question: {
-      type: 'question',
+      type: 'question' as EditorType,
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入问题标题...',
       submitText: '发布问题'
     },
     comment: {
-      type: 'comment',
+      type: 'comment' as EditorType,
       isNeedTopic: false,
       showTitle: false,
       placeholder: '写点评论...',

@@ -47,6 +47,7 @@ export const mockLogin = (username: string, password: string): Promise<AuthRespo
               username: user.username,
               nickname: user.nickname,
               avatar: user.avatar,
+              email: user.email,
               role: user.role
             }
           },
@@ -100,6 +101,7 @@ export const mockRegister = (username: string, password: string, email: string):
             username: newUser.username,
             nickname: newUser.nickname,
             avatar: newUser.avatar,
+            email: newUser.email,
             role: newUser.role
           }
         },
