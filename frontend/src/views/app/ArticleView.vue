@@ -9,7 +9,7 @@
           placeholder="选择话题" 
           clearable
           @change="handleTopicChange"
-          style="width: 200px; margin-right: 16px;"
+          style="width: 200px;"
         >
           <el-option 
             v-for="topic in topics" 
@@ -18,10 +18,6 @@
             :value="topic.id"
           />
         </el-select>
-        <el-button type="primary" @click="showEditor = true">
-          <el-icon><Edit /></el-icon>
-          写文章
-        </el-button>
       </div>
     </div>
 
@@ -53,6 +49,14 @@
       :current-post-type="'article'"
       @recommendation-click="handleRecommendationClick"
     />
+
+    <!-- 固定定位的写点什么按钮 -->
+    <div class="fixed-write-button">
+      <el-button type="primary" round size="large" @click="showEditor = true">
+        <el-icon><Edit /></el-icon>
+        写点什么
+      </el-button>
+    </div>
 
     <!-- 编辑器弹窗 -->
     <el-dialog
@@ -117,7 +121,7 @@ const fetchArticleList = async () => {
     }
 
     // 使用按类型获取文章的接口
-    const response = await request.get('posts/type/article', { params })
+    const response = await request.get('/posts/type/article', { params })
     
     if (response.code === 200) {
       posts.value = response.data.list || []
@@ -141,7 +145,7 @@ const fetchArticleList = async () => {
 const fetchRecommendations = async () => {
   try {
     // 获取热门文章作为推荐
-    const response = await request.get('posts/type/article', {
+    const response = await request.get('/posts/type/article', {
       params: {
         pageNum: 1,
         pageSize: 5
@@ -323,5 +327,15 @@ onMounted(() => {
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.fixed-write-button {
+  position: fixed;
+  bottom: 48px;
+  right: 48px;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  font-size: 16px;
+  padding: 12px 24px;
 }
 </style>

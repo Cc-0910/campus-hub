@@ -4,6 +4,34 @@
       <h1>文章</h1>
     </div>
     
+    <!-- 固定定位的写点什么按钮 -->
+    <div class="fixed-write-button">
+      <el-button type="primary" round size="large" @click="showEditor = true">
+        <el-icon><Edit /></el-icon>
+        写点什么
+      </el-button>
+    </div>
+    
+    <!-- 编辑器弹窗 -->
+    <el-dialog
+      v-model="showEditor"
+      title="发布文章"
+      width="60%"
+      :before-close="handleCloseEditor"
+    >
+      <CommonEditor
+        :show-topic-selector="true"
+        :show-title-input="true"
+        :show-comment-type="false"
+        :topics="topics"
+        :title-placeholder="'请输入文章标题'"
+        :content-placeholder="'请输入文章内容...'"
+        :submit-button-text="'发布文章'"
+        @submit="handlePublishWithEditor"
+        @cancel="handleCloseEditor"
+      />
+    </el-dialog>
+    
     <div class="articles-list">
       <el-skeleton 
         v-if="loading" 
@@ -24,7 +52,7 @@
                 {{ article.title }}
               </router-link>
             </h3>
-            <p class="article-summary" v-html="article.summary || article.content"></p>
+            <p class="article-summary">{{ truncateText(article.content || '') }}</p>
             
             <div class="article-meta">
               <div class="author-info">
@@ -76,6 +104,19 @@ import { ref, onMounted } from 'vue'
 import { getArticles } from '@/api/post'
 import { ElMessage } from 'element-plus'
 import { usePostStore, type Post } from '@/stores/post'
+import { useUserStore } from '@/stores/user.js'
+import type CommonEditor from '@/components/CommonEditor.vue'
+import { Edit } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+// 截取文本前n个字符的函数
+const truncateText = (text: string, maxLength: number = 15): string => {
+  if (!text) return ''
+  // 去除HTML标签
+  const plainText = text.replace(/<[^>]*>/g, '')
+  // 截取指定长度并添加省略号
+  return plainText.length > maxLength ? plainText.substring(0, maxLength) + '...' : plainText
+}
 
 const articles = ref<Post[]>([])
 const loading = ref(false)
@@ -86,59 +127,30 @@ const total = ref(0)
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const postStore = usePostStore()
+const userStore = useUserStore()
 
-// 生成随机文章列表的函数
-const generateRandomArticles = () => {
-  const titles = [
-    '校园生活指南',
-    '大学学习经验分享',
-    '如何平衡学习与社团活动？',
-    '校园美食地图',
-    '新生入学必知事项',
-    '期末考试复习攻略',
-    '校园兼职经验谈',
-    '宿舍生活小贴士',
-    '校园社团选择指南',
-    '大学生时间管理技巧'
-  ]
-  
-  const contents = [
-    '作为一名即将毕业的学长，我想分享一些校园生活的经验...',
-    '大学学习和高中有很大的不同，以下是我的一些学习经验...',
-    '在大学中，很多同学都会面临学习与社团活动的平衡问题...',
-    '校园里有很多隐藏的美食，今天我就来为大家介绍一下...',
-    '作为新生，刚入学时可能会感到迷茫，以下是一些必知事项...',
-    '期末考试即将来临，如何高效复习是每个同学都关心的问题...',
-    '在大学期间做兼职不仅可以赚零花钱，还能积累经验...',
-    '宿舍是我们在学校的家，如何让宿舍生活更舒适？...',
-    '校园里有各种各样的社团，如何选择适合自己的社团？...',
-    '时间管理是大学生必备的技能，以下是一些实用的技巧...'
-  ]
-  
-  const userNames = ['校园达人', '学长学姐', '学习委员', '社团主席', '美食爱好者', '时间管理大师', '兼职达人', '宿舍长']
-  
-  const randomArticles = []
-  const startId = (currentPage.value - 1) * pageSize.value + 1
-  
-  for (let i = 0; i < pageSize.value; i++) {
-    const id = startId + i
-    randomArticles.push({
-      id,
-      title: titles[i % titles.length] + ` - ${Math.floor(Math.random() * 1000)}`,
-      content: contents[i % contents.length],
-      summary: contents[i % contents.length].substring(0, 100) + '...',
-      author: {
-        nickname: userNames[Math.floor(Math.random() * userNames.length)],
-        avatar: defaultAvatar
-      },
-      commentCount: Math.floor(Math.random() * 50),
-      viewCount: Math.floor(Math.random() * 1000),
-      createTime: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
-    })
+// 编辑器相关
+const showEditor = ref(false)
+const topics = ref<Array<{ id: number; name: string }>>([])
+
+// 获取话题列表
+const fetchTopics = async () => {
+  try {
+    // 临时使用模拟数据，直到话题API实现
+    topics.value = [
+      { id: 1, name: 'Vue.js' },
+      { id: 2, name: 'Spring Boot' },
+      { id: 3, name: 'MyBatis-Plus' },
+      { id: 4, name: '前端开发' },
+      { id: 5, name: '后端开发' }
+    ]
+  } catch (error) {
+    console.error('获取话题列表失败:', error)
+    ElMessage.error('获取话题列表失败')
   }
-  
-  return randomArticles
 }
+
+
 
 const fetchArticles = async () => {
   try {
@@ -149,27 +161,25 @@ const fetchArticles = async () => {
     })
     
     // 检查返回数据结构是否符合预期
-    if (response.data && Array.isArray(response.data.list)) {
-      articles.value = response.data.list
-      total.value = response.data.total || 0
+    if (response && response.list && Array.isArray(response.list)) {
+      articles.value = response.list
+      total.value = response.total || 0
       
       // 缓存帖子列表
       postStore.cachePosts(articles.value)
     } else {
-      // 数据结构不符合预期，使用随机数据
-      throw new Error('返回数据结构不符合预期')
+      // 数据结构不符合预期，显示空列表
+      articles.value = []
+      total.value = 0
+      ElMessage.error('获取文章列表失败：数据结构不符合预期')
     }
   } catch (error) {
     console.error('获取文章列表失败:', error)
-    ElMessage.error('获取文章列表失败，显示随机内容')
+    ElMessage.error('获取文章列表失败')
     
-    // 使用随机数据作为降级方案
-    const randomArticles = generateRandomArticles()
-    articles.value = randomArticles
-    total.value = 100 // 设置一个合理的总条数
-    
-    // 缓存随机数据
-    postStore.cachePosts(randomArticles)
+    // 发生错误时显示空列表
+    articles.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
@@ -186,8 +196,46 @@ const handleCurrentChange = (page: number) => {
   fetchArticles()
 }
 
+// 编辑器相关方法
+const handleCloseEditor = () => {
+  showEditor.value = false
+}
+
+// 使用编辑器发布文章
+const handlePublishWithEditor = async (editorData: any) => {
+  if (!editorData.title.trim()) {
+    ElMessage.warning('请输入文章标题')
+    return
+  }
+  if (!editorData.content.trim()) {
+    ElMessage.warning('请输入文章内容')
+    return
+  }
+
+  try {
+    const response = await request.post('/post', {
+      title: editorData.title,
+      content: editorData.content,
+      type: 'article',
+      topicId: editorData.topicId
+    })
+    
+    if (response.data && response.data.code === 200) {
+      ElMessage.success('文章发布成功')
+      showEditor.value = false
+      fetchArticles() // 刷新列表
+    } else {
+      ElMessage.error(response.data?.message || '发布文章失败')
+    }
+  } catch (error) {
+    console.error('发布文章失败:', error)
+    ElMessage.error('发布文章失败')
+  }
+}
+
 onMounted(() => {
   fetchArticles()
+  fetchTopics()
 })
 </script>
 
@@ -242,10 +290,9 @@ onMounted(() => {
   color: #606266;
   font-size: 14px;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .article-meta {
@@ -294,5 +341,15 @@ onMounted(() => {
 
 .article-item-skeleton {
   margin-bottom: 20px;
+}
+
+.fixed-write-button {
+  position: fixed;
+  bottom: 48px;
+  right: 48px;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  font-size: 16px;
+  padding: 0;
 }
 </style>

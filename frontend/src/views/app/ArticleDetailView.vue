@@ -437,7 +437,7 @@ const fetchRelatedArticles = async () => {
     // 获取话题相关的帖子作为推荐
     // 这里可以使用现有的API获取帖子列表
     // request.js 的响应拦截器会直接返回 res.data，所以 response 已经是 data 对象
-    const response = await request.get('posts', {
+    const response = await request.get('/posts', {
       params: {
         pageNum: 1,
         pageSize: 3

@@ -228,48 +228,7 @@ const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e5
 // Store
 const postStore = usePostStore()
 
-// 生成随机问题内容
-const generateRandomQuestionContent = () => {
-  const questionContents = [
-    `<p>最近在学习Vue3的组合式API，感觉和之前的选项式API有很大不同。特别是在处理响应式数据和生命周期方面，想了解一下大家是如何快速上手的？</p><p>我目前遇到的主要问题是：</p><ul><li>如何更好地组织代码结构？</li><li>组合式API和TypeScript结合使用时有什么最佳实践？</li><li>在大型项目中如何避免代码冗余？</li></ul><p>希望有经验的开发者能够分享一下你们的经验和建议，谢谢！</p>`,
-    `<p>正在开发一个校园论坛网站，需要实现帖子的点赞和收藏功能。想了解一下在前后端分离的架构下，如何设计这两个功能的API和数据结构？</p><p>具体来说，我想知道：</p><ul><li>点赞和收藏的数据应该如何存储？</li><li>前端如何处理点赞和收藏的状态管理？</li><li>如何实现点赞和收藏的实时更新？</li></ul><p>期待大家的回答，不胜感激！</p>`,
-    `<p>最近在学习数据结构和算法，想找一些适合新手的练习题目和学习资源。请问大家有什么推荐吗？</p><p>我目前的基础是：</p><ul><li>了解基本的数据结构（数组、链表、栈、队列）</li><li>掌握基本的排序和搜索算法</li><li>能够用JavaScript实现简单的算法题目</li></ul><p>希望能够进一步提升自己的算法能力，特别是解决实际问题的能力。</p>`,
-    `<p>在学习Spring Boot的过程中，遇到了一些关于依赖注入和事务管理的问题。请问大家有什么好的学习资源或者经验可以分享吗？</p><p>我主要的困惑点在于：</p><ul><li>如何正确使用@Autowired和@Resource注解？</li><li>事务传播行为应该如何选择？</li><li>如何解决事务嵌套问题？</li></ul><p>感谢大家的帮助！</p>`,
-    `<p>最近在做一个移动端的项目，需要实现一个高性能的列表组件。请问在React Native中，如何优化长列表的性能？</p><p>我目前遇到的问题是：</p><ul><li>列表滚动时出现卡顿</li><li>大量数据加载时内存占用过高</li><li>图片加载影响性能</li></ul><p>希望有经验的开发者能够分享一下优化方案。</p>`,
-    `<p>在学习Python的过程中，想了解一下Python的异步编程。请问asyncio库应该如何使用？有什么好的学习资源吗？</p><p>我主要想知道：</p><ul><li>如何创建和运行协程？</li><li>如何处理异步IO操作？</li><li>异步编程有哪些最佳实践？</li></ul><p>期待大家的回答！</p>`
-  ]
 
-  const userNames = [
-    '编程新手', '前端工程师', '后端开发者', '全栈程序员', '算法爱好者',
-    '校园开发者', '技术博主', '产品经理', '设计师', '架构师',
-    '移动开发工程师', 'Python爱好者', 'Java开发者', '数据分析爱好者', 'DevOps工程师'
-  ]
-
-  const topicsList = [
-    [{ id: 1, name: '编程技术' }, { id: 2, name: '学习经验' }],
-    [{ id: 3, name: '前端开发' }, { id: 4, name: 'Vue.js' }],
-    [{ id: 5, name: '后端开发' }, { id: 6, name: 'Spring Boot' }],
-    [{ id: 7, name: '数据结构' }, { id: 8, name: '算法' }],
-    [{ id: 9, name: '移动开发' }, { id: 10, name: 'React Native' }],
-    [{ id: 11, name: 'Python' }, { id: 12, name: '异步编程' }]
-  ]
-
-  // 随机生成问题详情
-  return {
-    id: questionId.value,
-    title: `问答标题 ${questionId.value} - ${Math.floor(Math.random() * 1000)}`,
-    content: questionContents[Math.floor(Math.random() * questionContents.length)],
-    author: {
-      nickname: userNames[Math.floor(Math.random() * userNames.length)],
-      avatar: `https://cube.elemecdn.com/${Math.floor(Math.random() * 10)}/${Math.floor(Math.random() * 100)}/${Math.floor(Math.random() * 1000000)}bcpng.png`
-    },
-    createTime: new Date(Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000)).toISOString(),
-    viewCount: Math.floor(Math.random() * 1000),
-    likeCount: Math.floor(Math.random() * 100),
-    commentCount: Math.floor(Math.random() * 50),
-    topics: topicsList[Math.floor(Math.random() * topicsList.length)]
-  }
-}
 
 // 获取问题详情
 const fetchQuestionDetail = async () => {
@@ -291,33 +250,12 @@ const fetchQuestionDetail = async () => {
       questionDetail.value.title = cachedPost.title
       questionDetail.value.author = cachedPost.author
     }
-    
-    // 如果获取到的数据没有内容，则生成随机内容
-    if (!questionDetail.value.content || questionDetail.value.content.trim() === '') {
-      const randomContent = generateRandomQuestionContent()
-      // 保留从API或缓存获取的标题和作者信息，只替换内容和其他空字段
-      questionDetail.value = {
-        ...randomContent,
-        title: questionDetail.value.title || cachedPost?.title || randomContent.title,
-        author: questionDetail.value.author || cachedPost?.author || randomContent.author,
-        createTime: questionDetail.value.createTime || cachedPost?.createTime || randomContent.createTime
-      }
-    }
   } catch (error) {
     console.error('获取问题详情失败:', error)
-    ElMessage.error('获取问题详情失败，显示随机内容')
-    // 如果API调用失败，生成随机内容
-    const randomContent = generateRandomQuestionContent()
-    // 从store中获取缓存的帖子数据（如果有）
+    ElMessage.error('获取问题详情失败')
+    // 如果API调用失败，使用空对象或缓存数据
     const cachedPost = postStore.getCachedPost(questionId.value)
-    
-    // 优先使用缓存的标题和作者信息
-    questionDetail.value = {
-      ...randomContent,
-      title: cachedPost?.title || randomContent.title,
-      author: cachedPost?.author || randomContent.author,
-      createTime: cachedPost?.createTime || randomContent.createTime
-    }
+    questionDetail.value = cachedPost || {}
   }
 }
 
@@ -331,108 +269,16 @@ const fetchComments = async () => {
     commentCount.value = comments.value.length
   } catch (error) {
     console.error('获取评论失败:', error)
-    ElMessage.error('获取评论失败，显示随机评论')
-    // 如果API调用失败，生成随机评论
-    generateRandomComments()
+    ElMessage.error('获取评论失败')
+    // 如果API调用失败，显示空列表
+    comments.value = []
+    commentCount.value = 0
   }
 }
 
-// 生成随机评论
-const generateRandomComments = () => {
-  const commentContents = [
-    '这个问题很有价值，我也遇到过类似的情况。',
-    '感谢分享，我学到了很多新知识。',
-    '问题描述得很清楚，期待看到更多回答。',
-    '我有一个不同的观点，可能可以尝试一下...',
-    '这个问题确实很难解决，我也在寻找答案。',
-    '回答得非常详细，对我帮助很大。',
-    '我之前也遇到过同样的问题，后来通过...解决了。',
-    '这个问题涉及到很多方面，需要仔细分析。',
-    '期待看到更多人参与讨论。',
-    '问题提得很好，很有启发性。'
-  ]
 
-  const userNames = [
-    '小明', '小红', '小华', '小李', '小张',
-    '小王', '小刘', '小陈', '小杨', '小周'
-  ]
 
-  const commentsList = []
-  const randomCommentCount = Math.floor(Math.random() * 5) + 3 // 生成3-7条评论
 
-  for (let i = 0; i < randomCommentCount; i++) {
-    const comment = {
-      id: i + 1,
-      content: commentContents[Math.floor(Math.random() * commentContents.length)],
-      user: {
-        nickname: userNames[Math.floor(Math.random() * userNames.length)],
-        avatar: defaultAvatar
-      },
-      createTime: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString(),
-      likeCount: Math.floor(Math.random() * 20),
-      children: []
-    }
-
-    // 为部分评论添加回复
-    if (Math.random() > 0.7) {
-      const replyCount = Math.floor(Math.random() * 2) + 1 // 1-2条回复
-      for (let j = 0; j < replyCount; j++) {
-        comment.children.push({
-          id: `${comment.id}-${j+1}`,
-          content: commentContents[Math.floor(Math.random() * commentContents.length)],
-          user: {
-            nickname: userNames[Math.floor(Math.random() * userNames.length)],
-            avatar: defaultAvatar
-          },
-          replyToUser: {
-            nickname: userNames[Math.floor(Math.random() * userNames.length)]
-          },
-          createTime: new Date(Date.now() - Math.floor(Math.random() * 3 * 24 * 60 * 60 * 1000)).toISOString(),
-          likeCount: Math.floor(Math.random() * 10)
-        })
-      }
-    }
-
-    commentsList.push(comment)
-  }
-
-  comments.value = commentsList
-  commentCount.value = commentsList.length
-}
-
-// 生成随机推荐内容
-const generateRandomRelatedQuestions = () => {
-  const recommendTitles = [
-    'Vue3组合式API最佳实践',
-    'Spring Boot性能优化技巧',
-    '前端工程化实践指南',
-    '如何学习数据结构与算法',
-    '移动开发跨平台方案对比',
-    'Python异步编程深入解析',
-    '微服务架构设计原则',
-    '前端性能优化实战',
-    '数据库设计最佳实践',
-    'DevOps工具链搭建'
-  ]
-  
-  const userNames = [
-    '编程新手', '前端工程师', '后端开发者', '全栈程序员', '算法爱好者'
-  ]
-  
-  const relatedList = []
-  for (let i = 0; i < 3; i++) {
-    relatedList.push({
-      id: parseInt(questionId.value) + i + 1,
-      title: recommendTitles[Math.floor(Math.random() * recommendTitles.length)],
-      author: {
-        nickname: userNames[Math.floor(Math.random() * userNames.length)]
-      },
-      viewCount: Math.floor(Math.random() * 500)
-    })
-  }
-  
-  return relatedList
-}
 
 // 获取相关推荐
 const fetchRelatedQuestions = async () => {
@@ -447,11 +293,11 @@ const fetchRelatedQuestions = async () => {
       }
     })
     // 由于拦截器已经处理了 code !== 200 的情况，所以这里可以直接使用 response
-    relatedQuestions.value = response?.list || generateRandomRelatedQuestions()
+    relatedQuestions.value = response?.list || []
   } catch (error) {
     console.error('获取相关推荐失败:', error)
-    // API调用失败时生成随机推荐内容
-    relatedQuestions.value = generateRandomRelatedQuestions()
+    // API调用失败时显示空列表
+    relatedQuestions.value = []
   }
 }
 

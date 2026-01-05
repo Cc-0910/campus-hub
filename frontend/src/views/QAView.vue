@@ -4,6 +4,34 @@
       <h1>问答</h1>
     </div>
     
+    <!-- 固定定位的写点什么按钮 -->
+    <div class="fixed-write-button">
+      <el-button type="primary" round size="large" @click="showEditor = true">
+        <el-icon><Edit /></el-icon>
+        写点什么
+      </el-button>
+    </div>
+    
+    <!-- 编辑器弹窗 -->
+    <el-dialog
+      v-model="showEditor"
+      title="发布问题"
+      width="60%"
+      :before-close="handleCloseEditor"
+    >
+      <CommonEditor
+        :show-topic-selector="true"
+        :show-title-input="true"
+        :show-comment-type="false"
+        :topics="topics"
+        :title-placeholder="'请输入问题标题'"
+        :content-placeholder="'请输入问题详情...'"
+        :submit-button-text="'发布问题'"
+        @submit="handlePublishWithEditor"
+        @cancel="handleCloseEditor"
+      />
+    </el-dialog>
+    
     <div class="qa-list">
       <el-skeleton 
         v-if="loading" 
@@ -24,7 +52,7 @@
                 {{ question.title }}
               </router-link>
             </h3>
-            <p class="qa-summary" v-html="question.summary || question.content"></p>
+            <p class="qa-summary">{{ truncateText(question.content || '') }}</p>
             
             <div class="qa-meta">
               <div class="author-info">
@@ -76,6 +104,19 @@ import { ref, onMounted } from 'vue'
 import { getQuestions } from '@/api/post'
 import { ElMessage } from 'element-plus'
 import { usePostStore, type Post } from '@/stores/post'
+import { useUserStore } from '@/stores/user.js'
+import type CommonEditor from '@/components/CommonEditor.vue'
+import { Edit } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+// 截取文本前n个字符的函数
+const truncateText = (text: string, maxLength: number = 15): string => {
+  if (!text) return ''
+  // 去除HTML标签
+  const plainText = text.replace(/<[^>]*>/g, '')
+  // 截取指定长度并添加省略号
+  return plainText.length > maxLength ? plainText.substring(0, maxLength) + '...' : plainText
+}
 
 const questions = ref<Post[]>([])
 const loading = ref(false)
@@ -86,59 +127,27 @@ const total = ref(0)
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const postStore = usePostStore()
+const userStore = useUserStore()
 
-// 生成随机问答列表的函数
-const generateRandomQuestions = () => {
-  const titles = [
-    'Vue 3组合式API的最佳实践是什么？',
-    '如何解决前端跨域问题？',
-    'React和Vue的主要区别是什么？',
-    '如何优化Vue应用的性能？',
-    'TypeScript在前端开发中的优势？',
-    '如何实现响应式布局？',
-    '什么是单页应用(SPA)？',
-    '如何使用Element Plus组件库？',
-    '前端路由的原理是什么？',
-    '如何实现前端数据持久化？'
-  ]
-  
-  const contents = [
-    '我正在学习Vue 3的组合式API，想了解一下在实际项目中的最佳实践有哪些...',
-    '在开发前端项目时遇到了跨域问题，请问有哪些解决方案？...',
-    '作为一名前端新手，我想知道React和Vue这两个框架的主要区别是什么...',
-    '我的Vue应用在数据量大的时候运行比较慢，有什么优化方法吗？...',
-    '最近开始学习TypeScript，想了解它在前端开发中有哪些优势...',
-    '如何实现一个适配不同屏幕尺寸的响应式布局？...',
-    '什么是单页应用(SPA)？它与传统的多页应用有什么区别？...',
-    '刚接触Element Plus组件库，想知道如何快速上手使用它...',
-    '前端路由的原理是什么？如何实现页面之间的跳转？...',
-    '在前端开发中，有哪些方法可以实现数据的持久化存储？...'
-  ]
-  
-  const userNames = ['前端新手', '编程爱好者', '技术探索者', 'Vue开发者', 'React工程师', '全栈开发者', '学生党', '码农一枚']
-  
-  const randomQuestions = []
-  const startId = (currentPage.value - 1) * pageSize.value + 1
-  
-  for (let i = 0; i < pageSize.value; i++) {
-    const id = startId + i
-    randomQuestions.push({
-      id,
-      title: titles[i % titles.length] + ` - ${Math.floor(Math.random() * 1000)}`,
-      content: contents[i % contents.length],
-      summary: contents[i % contents.length].substring(0, 100) + '...',
-      author: {
-        nickname: userNames[Math.floor(Math.random() * userNames.length)],
-        avatar: defaultAvatar
-      },
-      commentCount: Math.floor(Math.random() * 50),
-      answerCount: Math.floor(Math.random() * 50),
-      viewCount: Math.floor(Math.random() * 1000),
-      createTime: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
-    })
+// 编辑器相关
+const showEditor = ref(false)
+const topics = ref<Array<{ id: number; name: string }>>([])
+
+// 获取话题列表
+const fetchTopics = async () => {
+  try {
+    // 临时使用模拟数据，直到话题API实现
+    topics.value = [
+      { id: 1, name: 'Vue.js' },
+      { id: 2, name: 'Spring Boot' },
+      { id: 3, name: 'MyBatis-Plus' },
+      { id: 4, name: '前端开发' },
+      { id: 5, name: '后端开发' }
+    ]
+  } catch (error) {
+    console.error('获取话题列表失败:', error)
+    ElMessage.error('获取话题列表失败')
   }
-  
-  return randomQuestions
 }
 
 const fetchQuestions = async () => {
@@ -150,27 +159,25 @@ const fetchQuestions = async () => {
     })
     
     // 检查返回数据结构是否符合预期
-    if (response.data && Array.isArray(response.data.list)) {
-      questions.value = response.data.list
-      total.value = response.data.total || 0
+    if (response && response.list && Array.isArray(response.list)) {
+      questions.value = response.list
+      total.value = response.total || 0
       
       // 缓存帖子列表
       postStore.cachePosts(questions.value)
     } else {
-      // 数据结构不符合预期，使用随机数据
-      throw new Error('返回数据结构不符合预期')
+      // 数据结构不符合预期，显示空列表
+      questions.value = []
+      total.value = 0
+      ElMessage.error('获取问答列表失败：数据结构不符合预期')
     }
   } catch (error) {
     console.error('获取问答列表失败:', error)
-    ElMessage.error('获取问答列表失败，显示随机内容')
+    ElMessage.error('获取问答列表失败')
     
-    // 使用随机数据作为降级方案
-    const randomQuestions = generateRandomQuestions()
-    questions.value = randomQuestions
-    total.value = 100 // 设置一个合理的总条数
-    
-    // 缓存随机数据
-    postStore.cachePosts(randomQuestions)
+    // 发生错误时显示空列表
+    questions.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
@@ -187,8 +194,46 @@ const handleCurrentChange = (page: number) => {
   fetchQuestions()
 }
 
+// 编辑器相关方法
+const handleCloseEditor = () => {
+  showEditor.value = false
+}
+
+// 使用编辑器发布问题
+const handlePublishWithEditor = async (editorData: any) => {
+  if (!editorData.title.trim()) {
+    ElMessage.warning('请输入问题标题')
+    return
+  }
+  if (!editorData.content.trim()) {
+    ElMessage.warning('请输入问题内容')
+    return
+  }
+
+  try {
+    const response = await request.post('/post', {
+      title: editorData.title,
+      content: editorData.content,
+      type: 'question',
+      topicId: editorData.topicId
+    })
+    
+    if (response.data && response.data.code === 200) {
+      ElMessage.success('问答发布成功')
+      showEditor.value = false
+      fetchQuestions() // 刷新列表
+    } else {
+      ElMessage.error(response.data?.message || '发布问答失败')
+    }
+  } catch (error) {
+    console.error('发布问题失败:', error)
+    ElMessage.error('发布问题失败')
+  }
+}
+
 onMounted(() => {
   fetchQuestions()
+  fetchTopics()
 })
 </script>
 
@@ -243,10 +288,9 @@ onMounted(() => {
   color: #606266;
   font-size: 14px;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .qa-meta {
@@ -295,5 +339,15 @@ onMounted(() => {
 
 .qa-item-skeleton {
   margin-bottom: 20px;
+}
+
+.fixed-write-button {
+  position: fixed;
+  bottom: 48px;
+  right: 48px;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  font-size: 16px;
+  padding: 0;
 }
 </style>

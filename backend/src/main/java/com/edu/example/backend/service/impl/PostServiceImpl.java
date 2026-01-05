@@ -11,7 +11,7 @@ import com.edu.example.backend.entity.Post;
 import com.edu.example.backend.entity.Topic;
 import com.edu.example.backend.entity.User;
 import com.edu.example.backend.mapper.PostMapper;
-import com.edu.example.backend.service.MockDataService;
+
 import com.edu.example.backend.service.PostService;
 import com.edu.example.backend.service.TopicService;
 import com.edu.example.backend.service.UserService;
@@ -28,19 +28,7 @@ import java.util.Random;
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements PostService {
     
-    // 模拟内容数组
-    private static final String[] CONTENTS = {
-        "大学生活是人生中重要的阶段，需要在学习、生活、社交等方面做好平衡。",
-        "学习方法对于大学生来说至关重要，找到适合自己的学习方式能事半功倍。",
-        "校园生活丰富多彩，参与社团活动和人际交往是大学生活的重要组成部分。",
-        "合理规划时间，平衡学习与娱乐，是大学生活的关键。",
-        "选课、考试、实习等都是大学期间需要面对的重要环节。",
-        "宿舍生活是大学生活的重要体验，与室友和谐相处很重要。",
-        "校园美食和周边环境也是大学生活体验的重要部分。",
-        "大学期间培养良好的学习和生活习惯对未来职业发展很有帮助。",
-        "大学是个人成长的重要阶段，需要做好学业规划和职业规划。",
-        "校园安全和健康生活是大学生活的基础保障。"
-    };
+
 
     @Autowired
     private PostMapper postMapper;
@@ -51,8 +39,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     @Autowired
     private TopicService topicService;
     
-    @Autowired
-    private MockDataService mockDataService;
+
 
     @Override
     public boolean createPost(String type, String title, String content, Long authorId, Long topicId) {
@@ -167,49 +154,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     public PostDetailDTO getPostDetail(Long id, Long userId) {
         Post post = this.getById(id);
         
-        // 如果找不到帖子，生成模拟数据
+        // 如果找不到帖子，直接返回null
         if (post == null) {
-            PostDetailDTO mockDetail = new PostDetailDTO();
-            mockDetail.setId(id);
-            
-            // 根据ID的奇偶性决定是问题还是文章
-            String type = (id % 2 == 0) ? "article" : "question";
-            
-            // 生成标题
-            if (type.equals("question")) {
-                mockDetail.setTitle("这是一个模拟问题标题" + id);
-            } else {
-                mockDetail.setTitle("这是一篇模拟文章标题" + id);
-            }
-            
-            // 生成内容
-            mockDetail.setContent(generateMockContent(type));
-            
-            // 设置基本信息
-            mockDetail.setCreateTime(LocalDateTime.now().minusDays((int) (Math.random() * 30)));
-            mockDetail.setViewCount((int) (Math.random() * 500));
-            mockDetail.setLikeCount((int) (Math.random() * 100));
-            
-            // 设置作者信息
-            AuthorDTO mockAuthor = new AuthorDTO();
-            mockAuthor.setId(1L);
-            mockAuthor.setNickname("模拟用户");
-            mockAuthor.setAvatar("https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png");
-            mockDetail.setAuthor(mockAuthor);
-            
-            // 设置话题信息
-            List<TopicDTO> mockTopics = new ArrayList<>();
-            TopicDTO mockTopic = new TopicDTO();
-            mockTopic.setId(1L);
-            mockTopic.setTitle("模拟话题");
-            mockTopics.add(mockTopic);
-            mockDetail.setTopics(mockTopics);
-            
-            // 设置交互状态
-            mockDetail.setIsLiked(false);
-            mockDetail.setIsStared(false);
-            
-            return mockDetail;
+            return null;
         }
         
         // 如果找到帖子，正常返回详情
@@ -250,47 +197,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         return dto;
     }
     
-    /**
-     * 生成模拟内容
-     */
-    private String generateMockContent(String type) {
-        // 从本类定义的CONTENTS数组中随机选择内容
-        Random random = new Random();
-        return CONTENTS[random.nextInt(CONTENTS.length)];
-    }
 
-    @Override
-    public PageInfo<PostItemDTO> getPostsWithMockData(Integer pageNum, Integer pageSize, Long topicId) {
-        // 首先获取实际数据
-        PageInfo<PostItemDTO> actualData = getPosts(pageNum, pageSize, topicId);
-        
-        // 如果实际数据不足或为空，则补充模拟数据
-        List<PostItemDTO> actualList = actualData.getList() != null ? actualData.getList() : new ArrayList<>();
-        List<PostItemDTO> allPosts = new ArrayList<>(actualList);
-        
-        // 计算需要的模拟数据数量
-        int neededMockCount = pageSize - actualList.size();
-        
-        if (neededMockCount > 0) {
-            // 根据当前查询条件决定生成哪种类型的模拟数据
-            // 如果有特定话题ID，可能需要根据话题内容决定类型，这里简化为根据页码奇偶性决定
-            String mockType = (pageNum % 2 == 0) ? "article" : "question";
-            
-            // 生成模拟数据
-            List<PostItemDTO> mockPosts = mockDataService.generateMockPosts(neededMockCount, mockType);
-            allPosts.addAll(mockPosts);
-        }
-        
-        // 创建包含实际数据和模拟数据的PageInfo
-        PageInfo<PostItemDTO> result = new PageInfo<>();
-        result.setList(allPosts);
-        long actualTotal = actualData.getTotal();
-        result.setTotal(actualTotal + (allPosts.size() - actualList.size())); // 更新总数
-        result.setPageNum(pageNum);
-        result.setPageSize(pageSize);
-        
-        return result;
-    }
 
     @Override
     public PageInfo<PostItemDTO> getPostsByType(String type, Integer pageNum, Integer pageSize, Long topicId) {
@@ -358,32 +265,5 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         return pageInfo;
     }
 
-    @Override
-    public PageInfo<PostItemDTO> getPostsWithMockDataByType(String type, Integer pageNum, Integer pageSize, Long topicId) {
-        // 首先获取实际数据
-        PageInfo<PostItemDTO> actualData = getPostsByType(type, pageNum, pageSize, topicId);
-        
-        // 如果实际数据不足或为空，则补充模拟数据
-        List<PostItemDTO> actualList = actualData.getList() != null ? actualData.getList() : new ArrayList<>();
-        List<PostItemDTO> allPosts = new ArrayList<>(actualList);
-        
-        // 计算需要的模拟数据数量
-        int neededMockCount = pageSize - actualList.size();
-        
-        if (neededMockCount > 0) {
-            // 生成指定类型的模拟数据
-            List<PostItemDTO> mockPosts = mockDataService.generateMockPosts(neededMockCount, type);
-            allPosts.addAll(mockPosts);
-        }
-        
-        // 创建包含实际数据和模拟数据的PageInfo
-        PageInfo<PostItemDTO> result = new PageInfo<>();
-        result.setList(allPosts);
-        long actualTotal = actualData.getTotal();
-        result.setTotal(actualTotal + (allPosts.size() - actualList.size())); // 更新总数
-        result.setPageNum(pageNum);
-        result.setPageSize(pageSize);
-        
-        return result;
-    }
+
 }

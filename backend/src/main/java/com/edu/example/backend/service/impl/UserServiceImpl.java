@@ -98,11 +98,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Integer fansCount = getFansCount(userId);
         Integer followingCount = getFollowingCount(userId);
         
-        return new UserProfileStats(
-            articleCount,
-            fansCount,
-            followingCount
-        );
+        UserProfileStats stats = new UserProfileStats();
+        stats.setArticleCount(articleCount);
+        stats.setFansCount(fansCount);
+        stats.setFollowingCount(followingCount);
+        
+        return stats;
     }
     
     @Override

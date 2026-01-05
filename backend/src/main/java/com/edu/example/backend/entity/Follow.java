@@ -20,4 +20,17 @@ public class Follow {
     private Long followingId; // 被关注者ID
     
     private java.sql.Timestamp createdAt; // 关注时间
+
+    // 手动添加setter方法以确保编译通过
+    public void setFollowerId(Long followerId) {
+        this.followerId = followerId;
+    }
+
+    public void setFollowingId(Long followingId) {
+        this.followingId = followingId;
+    }
+
+    public void setCreatedAt(java.sql.Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
 }
