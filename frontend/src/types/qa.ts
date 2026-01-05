@@ -18,5 +18,5 @@ export interface QuestionListResponse {
   code: number
   data: Question[]
   total: number
-  msg: string
+  message: string
 }

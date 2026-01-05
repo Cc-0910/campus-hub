@@ -17,5 +17,5 @@ export interface ArticleListResponse {
   code: number
   data: Article[]
   total: number
-  msg: string
+  message: string
 }

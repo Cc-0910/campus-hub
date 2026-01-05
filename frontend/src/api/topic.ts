@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+
 import type { Topic, TopicListResponse, FollowTopicRequest } from '@/types/topic'
 import type { Article, ArticleListResponse } from '@/types/article'
 import type { Question, QuestionListResponse } from '@/types/qa'
@@ -107,7 +107,7 @@ export const topicApi = {
           code: 200,
           data: paginatedTopics,
           total: topics.length,
-          msg: 'success'
+          message: 'success'
         })
       }, 500)
     })
@@ -156,7 +156,7 @@ export const topicApi = {
           code: 200,
           data: paginatedArticles,
           total: articles.length,
-          msg: 'success'
+          message: 'success'
         })
       }, 300)
     })
@@ -179,7 +179,7 @@ export const topicApi = {
           code: 200,
           data: paginatedQuestions,
           total: questions.length,
-          msg: 'success'
+          message: 'success'
         })
       }, 300)
     })

@@ -18,9 +18,9 @@
       <div class="editor-header">
         <div class="editor-tabs">
           <el-radio-group v-model="editorType" size="small">
-            <el-radio-button label="article">写文章</el-radio-button>
-            <el-radio-button label="question">提问题</el-radio-button>
-            <el-radio-button label="comment">写评论</el-radio-button>
+            <el-radio-button value="article">写文章</el-radio-button>
+            <el-radio-button value="question">提问题</el-radio-button>
+            <el-radio-button value="comment">写评论</el-radio-button>
           </el-radio-group>
         </div>
         <div class="editor-actions">
@@ -232,7 +232,7 @@
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { 
-  Edit, Minus, Close, Document, Delete, Plus 
+  Edit, Minus, Close, Document, Delete, Plus, Upload 
 } from '@element-plus/icons-vue'
 import type { EditorType, EditorMode, EditorContent, EditorConfig } from '@/types/editor'
 import type { Topic } from '@/types/topic'
@@ -302,18 +302,21 @@ const availableTopics = computed(() => mockTopics)
 const config = computed<EditorConfig>(() => {
   const configs = {
     article: {
+      type: 'article' as EditorType,
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入文章标题...',
       submitText: '发布文章'
     },
     question: {
+      type: 'question' as EditorType,
       isNeedTopic: true,
       showTitle: true,
       placeholder: '请输入问题标题...',
       submitText: '发布问题'
     },
     comment: {
+      type: 'comment' as EditorType,
       isNeedTopic: false,
       showTitle: false,
       placeholder: '写点评论...',
@@ -335,7 +338,7 @@ const canSubmit = computed(() => {
 })
 
 const emojiCategories = computed(() => {
-  return [...new Set(emojis.value.map(e => e.category))]
+  return Array.from(new Set(emojis.value.map(e => e.category)))
 })
 
 const filteredEmojis = computed(() => {
