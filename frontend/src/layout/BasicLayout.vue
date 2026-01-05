@@ -185,7 +185,7 @@ const handleCommand = (command) => {
     console.log('尝试跳转，当前用户ID:', userId);
 
     if (userId) {
-      router.push(`/user/${userId}`);
+      router.push(`/app/user/${userId}`);
     } else {
       ElMessage.error('无法跳转：未找到用户ID，请重新登录');
       console.error('用户信息缺失:', userStore.userInfo);

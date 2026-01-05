@@ -25,10 +25,13 @@ public class User {
     
     private String nickname;
     
-    private String avatar;
-    
     private String email;
     
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private String avatar;
+    
+    private java.time.LocalDateTime createTime;
+    
+    // 关注状态，用于前端显示用户是否被当前用户关注
+    @TableField(exist = false)
+    private Boolean isFollowing;
 }

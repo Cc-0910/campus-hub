@@ -124,12 +124,12 @@ const goToDetail = (type, id) => { // 简单的路由跳转逻辑，后续可根
 
 // --- 模拟数据 (Mock Data) - API Contract Compliant ---
 const recommendedTopics = ref([
-  { id: 1, title: '考研经验交流' },
-  { id: 2, title: '二手交易' },
-  { id: 3, title: '食堂美食推荐' },
-  { id: 4, title: '选课避雷指南' },
-  { id: 5, title: '失物招领' },
-  { id: 6, title: '社团活动' }
+  { id: 1, title: '校园生活' },
+  { id: 2, title: '学术交流' },
+  { id: 3, title: '求职招聘' },
+  { id: 4, title: '美食分享' },
+  { id: 5, title: '体育健身' },
+  { id: 6, title: '二手交易' }
 ])
 
 const latestQA = ref([

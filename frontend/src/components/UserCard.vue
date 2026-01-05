@@ -1,28 +1,28 @@
 <template>
   <div class="user-card">
     <div class="avatar-wrapper">
-      <img :src="user?.avatar || defaultAvatar" alt="Avatar" class="avatar" @click="goToProfile">
+      <img :src="user.avatar || defaultAvatar" alt="Avatar" class="avatar" @click="goToProfile">
     </div>
 
-    <div class="username">{{ user?.nickname || '用户' }}</div>
-    <div class="user-id" v-if="user?.id > 0">ID: {{ user.id }}</div>
+    <div class="username">{{ user.nickname || '用户' }}</div>
+    <div class="user-id" v-if="user.id">ID: {{ user.id }}</div>
 
     <div class="stats">
       <div class="stat-item" @click="goToArticles">
-        <span class="count">{{ user?.articleCount || 0 }}</span>
+        <span class="count">{{ user.articleCount || 0 }}</span>
         <span class="label">文章</span>
       </div>
       <div class="stat-item" @click="goToFollowing">
-        <span class="count">{{ user?.followingCount || 0 }}</span>
+        <span class="count">{{ user.followingCount || 0 }}</span>
         <span class="label">关注</span>
       </div>
       <div class="stat-item" @click="goToFollowers">
-        <span class="count">{{ user?.followerCount || 0 }}</span>
+        <span class="count">{{ user.followerCount || 0 }}</span>
         <span class="label">粉丝</span>
       </div>
     </div>
 
-    <div class="actions" v-if="user?.id > 0">
+    <div class="actions">
       <button class="btn" @click="goToArticles">文章</button>
       <button class="btn" @click="goToCollections">收藏</button>
       <button class="btn" @click="goToTopics">话题</button>
@@ -36,7 +36,7 @@ import { useRouter } from 'vue-router'
 const props = defineProps({
   user: {
     type: Object,
-    default: () => ({})
+    required: true
   }
 })
 
@@ -44,39 +44,29 @@ const router = useRouter()
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const goToProfile = () => {
-  if (props.user?.id) {
+  if (props.user.id) {
     router.push(`/app/user/${props.user.id}`)
   }
 }
 
 const goToArticles = () => {
-  if (props.user?.id) {
-    router.push(`/app/user/${props.user.id}/articles`)
-  }
+  router.push(`/app/user/${props.user.id}/articles`)
 }
 
 const goToCollections = () => {
-  if (props.user?.id) {
-    router.push(`/app/user/${props.user.id}/collections`)
-  }
+  router.push(`/app/user/${props.user.id}/collections`)
 }
 
 const goToTopics = () => {
-  if (props.user?.id) {
-    router.push(`/app/user/${props.user.id}/topics`)
-  }
+  router.push(`/app/user/${props.user.id}/topics`)
 }
 
 const goToFollowing = () => {
-  if (props.user?.id) {
-    router.push(`/app/user/${props.user.id}/following`)
-  }
+  router.push(`/app/user/${props.user.id}/following`)
 }
 
 const goToFollowers = () => {
-  if (props.user?.id) {
-    router.push(`/app/user/${props.user.id}/followers`)
-  }
+  router.push(`/app/user/${props.user.id}/followers`)
 }
 </script>
 

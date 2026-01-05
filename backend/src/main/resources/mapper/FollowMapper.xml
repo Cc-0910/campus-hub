@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.example.backend.mapper.FollowMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="FollowResultMap" type="com.edu.example.backend.entity.Follow">
+        <id property="id" column="id"/>
+        <result property="followerId" column="follower_id"/>
+        <result property="followingId" column="following_id"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 获取用户粉丝数量 -->
+    <select id="getFollowersCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM follow 
+        WHERE following_id = #{userId}
+    </select>
+    
+    <!-- 获取用户关注数量 -->
+    <select id="getFollowingCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM follow 
+        WHERE follower_id = #{userId}
+    </select>
+    
+    <!-- 判断是否关注 -->
+    <select id="isFollowing" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM follow 
+        WHERE follower_id = #{followerId} 
+        AND following_id = #{followingId}
+    </select>
+    
+    <!-- 获取用户关注的用户ID列表 -->
+    <select id="getFollowingUserIds" resultType="java.lang.Long">
+        SELECT following_id 
+        FROM follow 
+        WHERE follower_id = #{userId}
+        ORDER BY created_at DESC
+        <if test="size != null and size > 0">
+            LIMIT #{current}, #{size}
+        </if>
+    </select>
+    
+    <!-- 获取用户粉丝ID列表 -->
+    <select id="getFollowerUserIds" resultType="java.lang.Long">
+        SELECT follower_id 
+        FROM follow 
+        WHERE following_id = #{userId}
+        ORDER BY created_at DESC
+        <if test="size != null and size > 0">
+            LIMIT #{current}, #{size}
+        </if>
+    </select>
+    
+</mapper>
