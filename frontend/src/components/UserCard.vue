@@ -9,7 +9,7 @@
 
     <div class="stats">
       <div class="stat-item" @click="goToArticles">
-        <span class="count">{{ user.articleCount || 0 }}</span>
+        <span class="count">0</span>
         <span class="label">文章</span>
       </div>
       <div class="stat-item" @click="goToFollowing">

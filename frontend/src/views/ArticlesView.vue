@@ -105,7 +105,7 @@ import { getArticles } from '@/api/post'
 import { ElMessage } from 'element-plus'
 import { usePostStore, type Post } from '@/stores/post'
 import { useUserStore } from '@/stores/user.js'
-import type CommonEditor from '@/components/CommonEditor.vue'
+import CommonEditor from '@/components/CommonEditor.vue'
 import { Edit } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
@@ -161,9 +161,9 @@ const fetchArticles = async () => {
     })
     
     // 检查返回数据结构是否符合预期
-    if (response && response.list && Array.isArray(response.list)) {
-      articles.value = response.list
-      total.value = response.total || 0
+    if (response && response.data && response.data.list && Array.isArray(response.data.list)) {
+      articles.value = response.data.list
+      total.value = response.data.total || 0
       
       // 缓存帖子列表
       postStore.cachePosts(articles.value)
@@ -213,19 +213,19 @@ const handlePublishWithEditor = async (editorData: any) => {
   }
 
   try {
-    const response = await request.post('/post', {
+    const response = await request.post('/api/post', {
       title: editorData.title,
       content: editorData.content,
       type: 'article',
       topicId: editorData.topicId
     })
     
-    if (response.data && response.data.code === 200) {
+    if (response && response.code === 200) {
       ElMessage.success('文章发布成功')
       showEditor.value = false
       fetchArticles() // 刷新列表
     } else {
-      ElMessage.error(response.data?.message || '发布文章失败')
+      ElMessage.error(response?.message || '发布文章失败')
     }
   } catch (error) {
     console.error('发布文章失败:', error)

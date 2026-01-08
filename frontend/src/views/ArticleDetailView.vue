@@ -248,7 +248,6 @@ const fetchArticleDetail = async () => {
     }
   } catch (error) {
     console.error('获取文章详情失败:', error)
-    ElMessage.error('获取文章详情失败')
     // 如果API调用失败，使用空对象或缓存数据
     const cachedPost = postStore.getCachedPost(articleId.value)
     articleDetail.value = cachedPost || {}
@@ -265,7 +264,6 @@ const fetchComments = async () => {
     commentCount.value = comments.value.length
   } catch (error) {
     console.error('获取评论失败:', error)
-    ElMessage.error('获取评论失败')
     // 如果API调用失败，显示空列表
     comments.value = []
     commentCount.value = 0
@@ -365,7 +363,6 @@ const submitComment = async () => {
     ElMessage.success('评论发表成功')
   } catch (error) {
     console.error('发表评论失败:', error)
-    ElMessage.error('发表评论失败')
   } finally {
     commentSubmitting.value = false
   }

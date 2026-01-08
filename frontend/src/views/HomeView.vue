@@ -38,52 +38,84 @@
             </div>
           </template>
           <div class="card-content">
-            <p>这里将展示最新问答内容</p>
-            <ul>
-              <li>问题一：如何选课最合理？</li>
-              <li>问题二：食堂哪家窗口最好吃？</li>
-              <li>问题三：图书馆座位预约技巧</li>
+            <el-skeleton v-if="loading" :rows="3" animated />
+            <ul v-else-if="latestQuestions.length > 0">
+              <li v-for="question in latestQuestions" :key="question.id">
+                <router-link :to="`/app/qa/${question.id}`" class="post-link">
+                  {{ question.title }}
+                </router-link>
+              </li>
             </ul>
+            <p v-else>暂无最新问答</p>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- 底部内容区域（可选） -->
+    <!-- 中间内容区域 -->
     <el-row :gutter="20" class="content-row">
+      <!-- 最热问答 -->
       <el-col :xs="24" :sm="12" :md="8" :lg="8">
         <el-card class="content-card">
           <template #header>
             <div class="card-header">
-              <span>校园公告</span>
+              <span>最热问答</span>
             </div>
           </template>
           <div class="card-content">
-            <p>这里是校园公告内容</p>
+            <el-skeleton v-if="loading" :rows="3" animated />
+            <ul v-else-if="hotQuestions.length > 0">
+              <li v-for="question in hotQuestions" :key="question.id">
+                <router-link :to="`/app/qa/${question.id}`" class="post-link">
+                  {{ question.title }}
+                </router-link>
+              </li>
+            </ul>
+            <p v-else>暂无最热问答</p>
           </div>
         </el-card>
       </el-col>
+      
+      <!-- 最新文章 -->
       <el-col :xs="24" :sm="12" :md="8" :lg="8">
         <el-card class="content-card">
           <template #header>
             <div class="card-header">
-              <span>活动预告</span>
+              <span>最新文章</span>
             </div>
           </template>
           <div class="card-content">
-            <p>这里是活动预告内容</p>
+            <el-skeleton v-if="loading" :rows="3" animated />
+            <ul v-else-if="latestArticles.length > 0">
+              <li v-for="article in latestArticles" :key="article.id">
+                <router-link :to="`/app/article/${article.id}`" class="post-link">
+                  {{ article.title }}
+                </router-link>
+              </li>
+            </ul>
+            <p v-else>暂无最新文章</p>
           </div>
         </el-card>
       </el-col>
+      
+      <!-- 最热文章 -->
       <el-col :xs="24" :sm="24" :md="8" :lg="8">
         <el-card class="content-card">
           <template #header>
             <div class="card-header">
-              <span>热门资源</span>
+              <span>最热文章</span>
             </div>
           </template>
           <div class="card-content">
-            <p>这里是热门资源内容</p>
+            <el-skeleton v-if="loading" :rows="3" animated />
+            <ul v-else-if="hotArticles.length > 0">
+              <li v-for="article in hotArticles" :key="article.id">
+                <router-link :to="`/app/article/${article.id}`" class="post-link">
+                  {{ article.title }}
+                </router-link>
+              </li>
+            </ul>
+            <p v-else>暂无最热文章</p>
           </div>
         </el-card>
       </el-col>
@@ -91,10 +123,105 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HomeView',
-};
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { getPosts } from '@/api/post'
+import { ElMessage } from 'element-plus'
+import type { Post } from '@/stores/post'
+
+// 定义数据数组
+const latestQuestions = ref<Post[]>([])
+const hotQuestions = ref<Post[]>([])
+const latestArticles = ref<Post[]>([])
+const hotArticles = ref<Post[]>([])
+
+// 加载状态
+const loading = ref<boolean>(false)
+
+// 获取最新问答
+const fetchLatestQuestions = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'question',
+      sort: 'new'
+    })
+    if (response && response.data && response.data.list) {
+      latestQuestions.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最新问答失败:', error)
+    ElMessage.error('获取最新问答失败')
+  }
+}
+
+// 获取最热问答
+const fetchHotQuestions = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'question',
+      sort: 'hot'
+    })
+    if (response && response.data && response.data.list) {
+      hotQuestions.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最热问答失败:', error)
+    ElMessage.error('获取最热问答失败')
+  }
+}
+
+// 获取最新文章
+const fetchLatestArticles = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'article',
+      sort: 'new'
+    })
+    if (response && response.data && response.data.list) {
+      latestArticles.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最新文章失败:', error)
+    ElMessage.error('获取最新文章失败')
+  }
+}
+
+// 获取最热文章
+const fetchHotArticles = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'article',
+      sort: 'hot'
+    })
+    if (response && response.data && response.data.list) {
+      hotArticles.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最热文章失败:', error)
+    ElMessage.error('获取最热文章失败')
+  }
+}
+
+// 页面加载时获取数据
+onMounted(async () => {
+  loading.value = true
+  // 并行调用四个API
+  await Promise.all([
+    fetchLatestQuestions(),
+    fetchHotQuestions(),
+    fetchLatestArticles(),
+    fetchHotArticles()
+  ])
+  loading.value = false
+})
 </script>
 
 <style scoped>

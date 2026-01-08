@@ -8,12 +8,15 @@ import com.edu.example.backend.entity.Topic;
 // import com.edu.example.backend.entity.Question;
 import com.edu.example.backend.service.UserService;
 import com.edu.example.backend.service.TopicService;
+import com.edu.example.backend.service.PostService;
+import com.edu.example.backend.dto.PostItemDTO;
 // import com.edu.example.backend.service.QuestionService;
 import com.edu.example.backend.vo.UserDetailVO;
+import com.github.pagehelper.PageInfo;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -21,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     // 注意：由于 ArticleService、TopicService、QuestionService 可能不存在或未实现，
     // 这些方法暂时返回空结果或抛出未实现异常
@@ -45,10 +51,36 @@ public class UserController {
 
     // 获取用户发布的文章
     @GetMapping("/{id}/articles")
-    public Result<List<Article>> getArticles(@PathVariable Long id) {
-        // TODO: 实现获取用户文章的方法
-        // 暂时返回空结果
-        return Result.success(List.of());
+    public Result<List<PostItemDTO>> getArticles(@PathVariable Long id) {
+        try {
+            // 使用PostService获取用户发布的文章
+            PageInfo<PostItemDTO> posts = postService.getPostsByType("article", 1, 10, null);
+            // 过滤出当前用户的文章
+            List<PostItemDTO> userArticles = posts.getList().stream()
+                .filter(post -> post.getAuthor() != null && post.getAuthor().getId().equals(id))
+                .collect(Collectors.toList());
+            return Result.success(userArticles);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("获取用户文章失败");
+        }
+    }
+
+    // 获取用户发布的问答
+    @GetMapping("/{id}/questions")
+    public Result<List<PostItemDTO>> getQuestions(@PathVariable Long id) {
+        try {
+            // 使用PostService获取用户发布的问答
+            PageInfo<PostItemDTO> posts = postService.getPostsByType("question", 1, 10, null);
+            // 过滤出当前用户的问答
+            List<PostItemDTO> userQuestions = posts.getList().stream()
+                .filter(post -> post.getAuthor() != null && post.getAuthor().getId().equals(id))
+                .collect(Collectors.toList());
+            return Result.success(userQuestions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("获取用户问答失败");
+        }
     }
 
     // 获取用户关注的话题
@@ -63,14 +95,6 @@ public class UserController {
     @GetMapping("/{id}/followed-articles")
     public Result<List<Article>> getFollowedArticles(@PathVariable Long id) {
         // TODO: 实现获取用户关注的文章的方法
-        // 暂时返回空结果
-        return Result.success(List.of());
-    }
-
-    // 获取用户关注的问答
-    @GetMapping("/{id}/questions")
-    public Result<List<Object>> getFollowingQuestions(@PathVariable Long id) {
-        // TODO: 实现获取用户关注问答的方法
         // 暂时返回空结果
         return Result.success(List.of());
     }

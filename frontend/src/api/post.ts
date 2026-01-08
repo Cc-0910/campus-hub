@@ -5,6 +5,8 @@ export interface PostListParams {
   pageNum?: number
   pageSize?: number
   topicId?: number
+  type?: string
+  sort?: string
 }
 
 export interface PostResponse {
@@ -20,12 +22,14 @@ export interface PostResponse {
 
 // 获取文章/问答列表
 export function getPosts(params: PostListParams = {}) {
-  const { pageNum = 1, pageSize = 10, topicId } = params
-  return request.get<PostResponse>('/posts', {
+  const { pageNum = 1, pageSize = 10, topicId, type, sort } = params
+  return request.get<PostResponse>('/api/posts', {
     params: {
       pageNum,
       pageSize,
-      topicId
+      topicId,
+      type,
+      sort
     }
   })
 }
@@ -33,7 +37,7 @@ export function getPosts(params: PostListParams = {}) {
 // 根据类型获取文章/问答列表
 export function getPostsByType(type: string, params: PostListParams = {}) {
   const { pageNum = 1, pageSize = 10, topicId } = params
-  return request.get<PostResponse>(`/posts/type/${type}`, {
+  return request.get<PostResponse>(`/api/posts/type/${type}`, {
     params: {
       pageNum,
       pageSize,
@@ -44,7 +48,7 @@ export function getPostsByType(type: string, params: PostListParams = {}) {
 
 // 获取问答列表
 export function getQuestions(params: PostListParams = {}) {
-  return getPostsByType('qa', params)
+  return getPostsByType('question', params)
 }
 
 // 获取文章列表
@@ -54,5 +58,5 @@ export function getArticles(params: PostListParams = {}) {
 
 // 获取文章/问答详情
 export function getPostDetail(id: number) {
-  return request.get<any>(`/post/${id}`)
+  return request.get<any>(`/api/post/${id}`)
 }

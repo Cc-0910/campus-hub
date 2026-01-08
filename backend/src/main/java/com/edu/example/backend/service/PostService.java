@@ -15,7 +15,7 @@ public interface PostService extends IService<Post> {
     /**
      * 获取文章/问答列表
      */
-    PageInfo<PostItemDTO> getPosts(Integer pageNum, Integer pageSize, Long topicId);
+    PageInfo<PostItemDTO> getPosts(Integer pageNum, Integer pageSize, Long topicId, String type, String sort);
 
     /**
      * 获取文章/问答详情
@@ -25,7 +25,7 @@ public interface PostService extends IService<Post> {
     /**
      * 获取文章/问答列表（带模拟数据功能）
      */
-    PageInfo<PostItemDTO> getPostsWithMockData(Integer pageNum, Integer pageSize, Long topicId);
+    PageInfo<PostItemDTO> getPostsWithMockData(Integer pageNum, Integer pageSize, Long topicId, String type, String sort);
     
     /**
      * 根据类型获取文章/问答列表

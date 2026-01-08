@@ -20,7 +20,7 @@
       <div class="stats">
         <span>{{ userInfo.followerCount || userInfo.fansCount || 0 }} 粉丝</span>
         <span>{{ userInfo.followingCount || 0 }} 关注</span>
-        <span>{{ userInfo.articleCount || 0 }} 文章</span>
+        <span>0 文章</span>
       </div>
 
       <!-- 操作按钮 -->
@@ -55,7 +55,7 @@
         
         <el-tab-pane label="问答" name="questions">
           <div class="tab-content">
-            <p class="content-placeholder">暂无问答</p>
+            <ArticleList :articles="questions" />
           </div>
         </el-tab-pane>
         
@@ -82,6 +82,7 @@ const userId = route.params.id
 
 const userInfo = ref({})
 const articles = ref([])
+const questions = ref([])
 const activeTab = ref('articles')
 
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
@@ -90,7 +91,7 @@ onMounted(async () => {
   try {
     // 获取用户详情
     const res = await request({
-      url: `/user/${userId}`,
+      url: `/api/user/${userId}`,
       method: 'GET'
     })
     
@@ -109,15 +110,25 @@ onMounted(async () => {
 
     // 获取用户文章
     const artRes = await request({
-      url: `/user/${userId}/articles`,
+      url: `/api/user/${userId}/articles`,
       method: 'GET'
     })
     
     if (artRes.code === 200) {
       articles.value = artRes.data
     }
+    
+    // 获取用户问答
+    const qRes = await request({
+      url: `/api/user/${userId}/questions`,
+      method: 'GET'
+    })
+    
+    if (qRes.code === 200) {
+      questions.value = qRes.data
+    }
   } catch (error) {
-    ElMessage.error('加载用户数据失败: ' + (error.message || '未知错误'))
+    console.error('加载用户数据失败:', error)
   }
 })
 
@@ -127,7 +138,7 @@ const handleFollow = async () => {
     if (userInfo.value.isFollowing) {
       // 取消关注
       const response = await request({
-        url: `/user/follow/${userInfo.value.id}`,
+        url: `/api/user/follow/${userInfo.value.id}`,
         method: 'DELETE'
       })
       
@@ -141,7 +152,7 @@ const handleFollow = async () => {
     } else {
       // 关注
       const response = await request({
-        url: `/user/follow/${userInfo.value.id}`,
+        url: `/api/user/follow/${userInfo.value.id}`,
         method: 'POST'
       })
       

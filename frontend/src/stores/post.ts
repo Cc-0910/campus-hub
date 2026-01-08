@@ -14,6 +14,7 @@ export interface Post {
   viewCount: number
   createTime: string
   tags?: string[]
+  type: string // 用于区分是question还是article
 }
 
 export const usePostStore = defineStore(

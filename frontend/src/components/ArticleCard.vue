@@ -1,5 +1,5 @@
 <template>
-  <el-card class="article-card" shadow="hover">
+  <el-card class="article-card" shadow="hover" @click="goToArticle">
     <template #header>
       <div class="article-header">
         <h3 class="article-title">{{ article.title }}</h3>
@@ -9,7 +9,7 @@
       </div>
     </template>
     
-    <div class="article-content" @click="goToArticle">
+    <div class="article-content">
       <p class="article-excerpt">{{ article.summary || article.content.substring(0, 150) + '...' }}</p>
     </div>
     
@@ -54,7 +54,11 @@ const formatDate = (timestamp) => {
 }
 
 const goToArticle = () => {
-  router.push(`/article/${props.article.id}`)
+  if (props.article.type === 'question') {
+    router.push(`/app/questions/${props.article.id}`)
+  } else {
+    router.push(`/app/articles/${props.article.id}`)
+  }
 }
 </script>
 

@@ -102,7 +102,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   Collection, 
@@ -111,18 +111,22 @@ import {
   HotWater,
   Trophy
 } from '@element-plus/icons-vue'
+import { getPosts } from '@/api/post'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
 const goToDetail = (type, id) => { // 简单的路由跳转逻辑，后续可根据实际路由调整
   if (type === 'topic') {
     router.push(`/app/topics/${id}`)
+  } else if (type === 'question') {
+    router.push(`/app/qa/${id}`)
   } else {
     router.push(`/app/${type}/${id}`)
   }
 }
 
-// --- 模拟数据 (Mock Data) - API Contract Compliant ---
+// 初始化数据数组
 const recommendedTopics = ref([
   { id: 1, title: '校园生活' },
   { id: 2, title: '学术交流' },
@@ -132,37 +136,89 @@ const recommendedTopics = ref([
   { id: 6, title: '二手交易' }
 ])
 
-const latestQA = ref([
-  { id: 101, title: '新校区的图书馆几点闭馆？', createTime: '10分钟前', type: 'question' },
-  { id: 102, title: '求推荐C++的高质量网课资源', createTime: '30分钟前', type: 'question' },
-  { id: 103, title: '有没有周末一起去爬岳麓山的？', createTime: '1小时前', type: 'question' },
-  { id: 104, title: '请问奖学金评定的综测分怎么算？', createTime: '2小时前', type: 'question' },
-  { id: 105, title: '校园网怎么又断了？？？', createTime: '3小时前', type: 'question' }
-])
+const latestQA = ref([])
+const hottestQA = ref([])
+const latestArticles = ref([])
+const hottestArticles = ref([])
 
-const hottestQA = ref([
-  { id: 201, title: '关于近期食堂涨价的讨论', viewCount: 5230, type: 'question' },
-  { id: 202, title: '如何看待今年的保研政策变化？', viewCount: 4102, type: 'question' },
-  { id: 203, title: '大一新生入坑指南，学长血泪史', viewCount: 3890, type: 'question' },
-  { id: 204, title: '那个窗口的阿姨手真的不抖！', viewCount: 2560, type: 'question' },
-  { id: 205, title: '有没有人捡到一个粉色的AirPods？', viewCount: 1200, type: 'question' }
-])
+// 获取最新问答
+const fetchLatestQA = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'question',
+      sort: 'new'
+    })
+    if (response && response.data && response.data.list) {
+      latestQA.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最新问答失败:', error)
+  }
+}
 
-const latestArticles = ref([
-  { id: 301, title: 'Web前端开发学习路线图(2025版)', createTime: '今天', type: 'article' },
-  { id: 302, title: '深度解析 DeepSeek 的技术原理', createTime: '昨天', type: 'article' },
-  { id: 303, title: '我的大学四年回顾：迷茫与成长', createTime: '2天前', type: 'article' },
-  { id: 304, title: '摄影社春季外拍活动精选照片', createTime: '3天前', type: 'article' },
-  { id: 305, title: '校辩论队夺冠战报！', createTime: '1周前', type: 'article' }
-])
+// 获取最热问答
+const fetchHottestQA = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'question',
+      sort: 'hot'
+    })
+    if (response && response.data && response.data.list) {
+      hottestQA.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最热问答失败:', error)
+  }
+}
 
-const hottestArticles = ref([
-  { id: 401, title: 'ACM金牌选手的算法笔记分享', viewCount: 9999, type: 'article' },
-  { id: 402, title: '中南大学周边美食地图（附攻略）', viewCount: 8848, type: 'article' },
-  { id: 403, title: '教你如何优雅地使用校园VPN', viewCount: 6666, type: 'article' },
-  { id: 404, title: '那些年我们在图书馆占过的座', viewCount: 5520, type: 'article' },
-  { id: 405, title: '毕业季二手物品清理清单', viewCount: 4300, type: 'article' }
-])
+// 获取最新文章
+const fetchLatestArticles = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'article',
+      sort: 'new'
+    })
+    if (response && response.data && response.data.list) {
+      latestArticles.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最新文章失败:', error)
+  }
+}
+
+// 获取最热文章
+const fetchHottestArticles = async () => {
+  try {
+    const response = await getPosts({
+      pageNum: 1,
+      pageSize: 5,
+      type: 'article',
+      sort: 'hot'
+    })
+    if (response && response.data && response.data.list) {
+      hottestArticles.value = response.data.list
+    }
+  } catch (error) {
+    console.error('获取最热文章失败:', error)
+  }
+}
+
+// 页面加载时获取数据
+onMounted(async () => {
+  // 并行调用四个API
+  await Promise.all([
+    fetchLatestQA(),
+    fetchHottestQA(),
+    fetchLatestArticles(),
+    fetchHottestArticles()
+  ])
+})
 </script>
 
 <style scoped>

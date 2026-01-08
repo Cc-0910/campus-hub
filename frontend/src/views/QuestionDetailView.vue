@@ -252,7 +252,6 @@ const fetchQuestionDetail = async () => {
     }
   } catch (error) {
     console.error('获取问题详情失败:', error)
-    ElMessage.error('获取问题详情失败')
     // 如果API调用失败，使用空对象或缓存数据
     const cachedPost = postStore.getCachedPost(questionId.value)
     questionDetail.value = cachedPost || {}
@@ -269,7 +268,6 @@ const fetchComments = async () => {
     commentCount.value = comments.value.length
   } catch (error) {
     console.error('获取评论失败:', error)
-    ElMessage.error('获取评论失败')
     // 如果API调用失败，显示空列表
     comments.value = []
     commentCount.value = 0

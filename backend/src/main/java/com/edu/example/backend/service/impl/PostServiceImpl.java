@@ -69,19 +69,29 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     }
 
     @Override
-    public PageInfo<PostItemDTO> getPosts(Integer pageNum, Integer pageSize, Long topicId) {
+    public PageInfo<PostItemDTO> getPosts(Integer pageNum, Integer pageSize, Long topicId, String type, String sort) {
         // 使用PageHelper进行分页
         Page<Post> page = new Page<>(pageNum, pageSize);
         
         QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_deleted", 0); // 未删除的
         
+        // 如果指定了类型，则按类型过滤
+        if (type != null && !type.isEmpty()) {
+            queryWrapper.eq("type", type);
+        }
+        
         // 如果指定了话题ID，则查询该话题下的内容
         if (topicId != null && topicId > 0) {
             queryWrapper.eq("topic_id", topicId);
         }
         
-        queryWrapper.orderByDesc("create_time"); // 按创建时间倒序
+        // 根据sort参数排序
+        if (sort != null && sort.equals("hot")) {
+            queryWrapper.orderByDesc("view_count"); // 按访问量倒序
+        } else {
+            queryWrapper.orderByDesc("create_time"); // 默认按创建时间倒序
+        }
         
         Page<Post> postPage = this.page(page, queryWrapper);
         
@@ -265,5 +275,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         return pageInfo;
     }
 
+    @Override
+    public PageInfo<PostItemDTO> getPostsWithMockData(Integer pageNum, Integer pageSize, Long topicId, String type, String sort) {
+        // 调用普通的getPosts方法
+        PageInfo<PostItemDTO> pageInfo = getPosts(pageNum, pageSize, topicId, type, sort);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<PostItemDTO> getPostsWithMockDataByType(String type, Integer pageNum, Integer pageSize, Long topicId) {
+        // 调用普通的getPostsByType方法
+        PageInfo<PostItemDTO> pageInfo = getPostsByType(type, pageNum, pageSize, topicId);
+        return pageInfo;
+    }
 
 }

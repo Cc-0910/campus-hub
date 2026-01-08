@@ -18,7 +18,7 @@ export const useUserStore = defineStore(
     const login = async (username, password) => {
       // 首先尝试真实API，如果失败则使用模拟登录
       try {
-        const res = await request.post('/auth/login', {
+        const res = await request.post('/api/auth/login', {
           username,
           password
         })
@@ -60,7 +60,7 @@ export const useUserStore = defineStore(
     const register = async (username, password, email) => {
       // 首先尝试真实API，如果失败则使用模拟注册
       try {
-        const res = await request.post('/auth/register', {
+        const res = await request.post('/api/auth/register', {
           username,
           password,
           email

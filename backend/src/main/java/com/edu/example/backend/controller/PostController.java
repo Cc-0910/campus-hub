@@ -64,13 +64,15 @@ public class PostController {
     public Map<String, Object> getPosts(
         @RequestParam(defaultValue = "1") Integer pageNum,
         @RequestParam(defaultValue = "10") Integer pageSize,
-        @RequestParam(required = false) Long topicId) {
+        @RequestParam(required = false) Long topicId,
+        @RequestParam(required = false) String type,
+        @RequestParam(required = false) String sort) {
         
         Map<String, Object> result = new HashMap<>();
         
         try {
             // 使用带模拟数据的方法
-            PageInfo<PostItemDTO> pageInfo = postService.getPostsWithMockData(pageNum, pageSize, topicId);
+            PageInfo<PostItemDTO> pageInfo = postService.getPostsWithMockData(pageNum, pageSize, topicId, type, sort);
             
             Map<String, Object> data = new HashMap<>();
             // 确保list不为null，符合API公约

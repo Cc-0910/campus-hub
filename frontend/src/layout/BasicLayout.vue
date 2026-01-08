@@ -106,6 +106,7 @@
     <div class="effects-container">
       <CursorBoom />
       <ClickExplosion />
+      <TypingParticles />
     </div>
   </div>
 </template>
@@ -118,6 +119,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import SideProfileCard from '@/components/SideProfileCard.vue'
 import CursorBoom from '@/components/Effects/CursorBoom.vue'
 import ClickExplosion from '@/components/Effects/ClickExplosion.vue'
+import TypingParticles from '@/components/Effects/TypingParticles.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import {
   House,
